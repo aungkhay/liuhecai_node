@@ -2,7 +2,7 @@ const ZodiacHelper = require('../../helpers/ZodiacHelper');
 const CommonHelper = require('../../helpers/CommonHelper');
 const RedisHelper = require('../../helpers/RedisHelper');
 const MyResponse = require('../../helpers/MyResponse');
-const { AomenRecord, HongKongRecord, PlatformRecord } = require('../../models');
+const { Banner, AomenRecord, HongKongRecord, PlatformRecord } = require('../../models');
 const { Op } = require('sequelize');
 
 class Controller {
@@ -11,6 +11,18 @@ class Controller {
         this.commonHelper = new CommonHelper();
         this.redisHelper = new RedisHelper(app);
         this.ResCode = this.commonHelper.ResCode;
+    }
+
+    GET_BANNER = async (req, res) => {
+        try {
+            const banners = await Banner.findAll({
+                order: [['id', 'DESC']],
+            });
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', banners);
+        } catch (error) {
+            console.error(error);
+            return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+        }
     }
 
     GET_ZODIAC_NUMBERS = async (req, res) => {

@@ -1,6 +1,7 @@
 node_modules
 .env
 logs/
+uploads/
 
 # Editor directories and files
 .vscode/*

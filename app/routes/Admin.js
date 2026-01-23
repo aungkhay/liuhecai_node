@@ -9,13 +9,20 @@ class AdminRoute extends express.Router {
         
         const FormValidator = require('../middlewares/FormValidator.Admin');
 
+        // Auth Routes
         const AuthController = require('../controllers/admins/AuthController');
         const authCtrl = new AuthController(app);
-
         this.get('/get-recaptcha', authCtrl.GET_RECAPTCHA);
         this.post('/login', authCtrl.LOGIN);
         this.post('/logout', middleware.isLoggedIn, authCtrl.LOGOUT);
         this.get('/profile', middleware.isLoggedIn, authCtrl.PROFILE);
+
+        // Banner Routes
+        const BannerController = require('../controllers/admins/BannerController');
+        const bannerCtrl = new BannerController(app);
+        this.get('/banners', middleware.isLoggedIn, bannerCtrl.INDEX);
+        this.post('/banners/upload', middleware.isLoggedIn, bannerCtrl.UPLOAD);
+        this.post('/banners/:id/delete', middleware.isLoggedIn, bannerCtrl.DELETE);
 
         // Zodiac Routes
         const ZodiacController = require('../controllers/admins/ZodiacController');

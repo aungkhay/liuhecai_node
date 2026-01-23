@@ -1,5 +1,6 @@
 const db = require('../connections/Mysql');
 
+const Banner = require('./Banner');
 const Config = require('./Config');
 const User = require('./User');
 const AomenRecord = require('./AomenRecord');
@@ -7,6 +8,7 @@ const HongKongRecord = require('./HongKongRecord');
 const PlatformRecord = require('./PlatformRecord');
 
 const models = {
+    Banner,
     Config,
     User,
     AomenRecord,
