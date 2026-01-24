@@ -6,7 +6,7 @@ exports.create_record = () => {
         check('batch_number').not().isEmpty().withMessage('期数不能为空'),
         check('lottery_type').not().isEmpty().withMessage('彩票类型不能为空')
             .bail()
-            .isIn(['aomen', 'hongkong']).withMessage('彩票类型值不正确'),
+            .isIn(['platform', 'aomen', 'hongkong']).withMessage('彩票类型值不正确'),
         check('num1').not().isEmpty().withMessage('号码1不能为空'),
         check('num1_desc').not().isEmpty().withMessage('号码1描述不能为空'),
         check('num2').not().isEmpty().withMessage('号码2不能为空'),
@@ -22,5 +22,12 @@ exports.create_record = () => {
         check('num7').not().isEmpty().withMessage('号码7不能为空'),
         check('num7_desc').not().isEmpty().withMessage('号码7描述不能为空'),
         check('draw_date').not().isEmpty().withMessage('开奖日期不能为空')
+    ]
+}
+
+exports.create_result_guess = () => {
+    return [
+        check('batch_number').not().isEmpty().withMessage('期号不能为空'),
+        check('zodiac_attr').not().isEmpty().withMessage('生肖属性不能为空'),
     ]
 }

@@ -2,7 +2,7 @@ const ZodiacHelper = require('../../helpers/ZodiacHelper');
 const CommonHelper = require('../../helpers/CommonHelper');
 const RedisHelper = require('../../helpers/RedisHelper');
 const MyResponse = require('../../helpers/MyResponse');
-const { Banner, AomenRecord, HongKongRecord, PlatformRecord } = require('../../models');
+const { Banner, AomenRecord, HongKongRecord, PlatformRecord, Config, ResultGuess } = require('../../models');
 const { Op } = require('sequelize');
 
 class Controller {
@@ -11,6 +11,21 @@ class Controller {
         this.commonHelper = new CommonHelper();
         this.redisHelper = new RedisHelper(app);
         this.ResCode = this.commonHelper.ResCode;
+    }
+
+    GET_YEAR = async (req, res) => {
+        try {
+            const year = await this.redisHelper.getValue('current_year');
+            if (year) {
+                return MyResponse(res, this.ResCode.SUCCESS.code, true, 'Success', { year: year });
+            }
+
+            const conf = await Config.findOne({ where: { type: 'current_year' }, attributes: ['val'] });
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, 'Success', { year: conf.val });
+        } catch (error) {
+            console.error(error);
+            return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+        }
     }
 
     GET_BANNER = async (req, res) => {
@@ -132,6 +147,19 @@ class Controller {
 
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', data);
             
+        } catch (error) {
+            console.error(error);
+            return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+        }
+    }
+
+    RESULT_GUESS = async (req, res) => {
+        try {
+            const results = await ResultGuess.findAll({
+                order: [['id', 'DESC']],
+                limit: 6
+            });
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', results);
         } catch (error) {
             console.error(error);
             return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});

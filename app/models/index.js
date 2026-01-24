@@ -6,6 +6,7 @@ const User = require('./User');
 const AomenRecord = require('./AomenRecord');
 const HongKongRecord = require('./HongKongRecord');
 const PlatformRecord = require('./PlatformRecord');
+const ResultGuess = require('./ResultGuess');
 
 const models = {
     Banner,
@@ -14,6 +15,7 @@ const models = {
     AomenRecord,
     HongKongRecord,
     PlatformRecord,
+    ResultGuess
 }
 
 // Export models + db connection

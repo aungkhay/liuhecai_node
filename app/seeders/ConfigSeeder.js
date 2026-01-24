@@ -4,10 +4,10 @@ const Redis = require('../connections/Redis');
 module.exports = async () => {
     const configs = [
         {
-            type: 'current_zodiac',
-            title: 'Current Zodiac',
-            val: 'snake-2025',
-            description: 'Snake 2025',
+            type: 'current_year',
+            title: 'Current Year',
+            val: '2025',
+            description: 'Year 2025',
             data_type: 'string'
         }
     ];
