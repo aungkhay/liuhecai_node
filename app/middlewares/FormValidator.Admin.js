@@ -73,3 +73,12 @@ exports.update_san_xiaos = () => {
             .withMessage('号码数组不能为空'),
     ]
 }
+
+exports.create_touzi_pingte = () => {
+    return [
+        check('year').not().isEmpty().withMessage('年份不能为空'),
+        check('batch_start').not().isEmpty().withMessage('投注范围开始不能为空'),
+        check('batch_end').not().isEmpty().withMessage('投注范围结束不能为空'),
+        check('zodiac_name').not().isEmpty().withMessage('生肖名称不能为空'),
+    ]
+}

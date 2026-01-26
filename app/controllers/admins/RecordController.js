@@ -1,5 +1,5 @@
 const MyResponse = require('../../helpers/MyResponse');
-const { AomenRecord, HongKongRecord, PlatformRecord, db, ResultGuess } = require('../../models');
+const { AomenRecord, HongKongRecord, PlatformRecord, db, ResultGuess, TouZiPingTe } = require('../../models');
 const CommonHelper = require('../../helpers/CommonHelper');
 const ZodiacHelper = require('../../helpers/ZodiacHelper');
 let { validationResult } = require('express-validator');
@@ -10,6 +10,25 @@ class Controller {
         this.zodiacHelper = new ZodiacHelper();
         this.ResCode = this.commonHelper.ResCode;
         this.getOffset = this.commonHelper.getOffset;
+    }
+
+    PLATFORM_LAST_BATCH_NUMBER = async (req, res) => {
+        try {
+            const record = await PlatformRecord.findOne({
+                order: [['id', 'DESC']],
+            });
+            let last_batch_number = 1;
+            if (record) {
+                last_batch_number = Number(record.batch_number) + 1;
+            }
+            const data = {
+                last_batch_number: last_batch_number,
+            }
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', data);
+        } catch (error) {
+            console.error(error);
+            return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+        }
     }
 
     INDEX = async (req, res) => {
@@ -87,10 +106,35 @@ class Controller {
                     result_match = 1;
                 }
 
+                const touziPingTeRecord = await TouZiPingTe.findOne({
+                    attributes: ['id', 'batch_start', 'batch_end', 'zodiac_name', 'open_count'],
+                    order: [['id', 'DESC']],
+                });
+                if (!touziPingTeRecord) {
+                    return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '请先创建投资平特记录', {});
+                }
+                if (parseInt(batch_number) > touziPingTeRecord.batch_end) {
+                    return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '当前期数超出投资平特范围', {});
+                }
+                if (parseInt(batch_number) < touziPingTeRecord.batch_start) {
+                    return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '当前期数低于投资平特范围', {});
+                }
+                let nameArr = [];
+                for (let i = 1; i <= 7; i++) {
+                    const zName = req.body[`num${i}_desc`].split('');
+                    nameArr.push(zName[0]);
+                }
+
                 const t = await db.transaction();
                 try {
                     await Model.create(req.body, { transaction: t });
                     await resultGuess.update({ result_match: result_match, result_number: req.body.num7, zodiac_name: zodiacName[0] }, { transaction: t });
+                    if (nameArr.includes(touziPingTeRecord.zodiac_name)) {
+                        await touziPingTeRecord.update({ open_count: touziPingTeRecord.open_count + 1 }, { transaction: t });
+                    }
+                    if (batch_number == touziPingTeRecord.batch_end) {
+                        await touziPingTeRecord.update({ is_finished: 1 }, { transaction: t });
+                    }
                     await t.commit();
                 } catch (error) {
                     await t.rollback();

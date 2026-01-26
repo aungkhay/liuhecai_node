@@ -43,6 +43,7 @@ class AdminRoute extends express.Router {
         // Record Routes
         const RecordController = require('../controllers/admins/RecordController');
         const recordCtrl = new RecordController(app);
+        this.get('/lottery-records/last-batch-number', middleware.isLoggedIn, recordCtrl.PLATFORM_LAST_BATCH_NUMBER);
         this.get('/lottery-records', middleware.isLoggedIn, recordCtrl.INDEX);
         this.post('/lottery-records/create', FormValidator.create_record(), middleware.isLoggedIn,  recordCtrl.CREATE);
         this.post('/lottery-records/:id/update', FormValidator.create_record(), middleware.isLoggedIn, recordCtrl.UPDATE);
@@ -55,6 +56,15 @@ class AdminRoute extends express.Router {
         this.post('/result-guesses/create', FormValidator.create_result_guess(), middleware.isLoggedIn, resultGuessCtrl.CREATE);
         this.post('/result-guesses/:id/update', FormValidator.create_result_guess(), middleware.isLoggedIn, resultGuessCtrl.UPDATE);
         this.post('/result-guesses/:id/delete', middleware.isLoggedIn, resultGuessCtrl.DELETE);
+
+        // TouZiPingTe Routes
+        const TouziPingteController = require('../controllers/admins/TouziPingteController');
+        const touziPingteCtrl = new TouziPingteController(app);
+        this.get('/tou-zi-ping-te', middleware.isLoggedIn, touziPingteCtrl.INDEX);
+        this.get('/tou-zi-ping-te/last-batch-number', middleware.isLoggedIn, touziPingteCtrl.LAST_BATCH_NUMBER);
+        this.post('/tou-zi-ping-te/create', FormValidator.create_touzi_pingte(), middleware.isLoggedIn, touziPingteCtrl.CREATE);
+        this.post('/tou-zi-ping-te/:id/update', FormValidator.create_touzi_pingte(), middleware.isLoggedIn, touziPingteCtrl.UPDATE);
+        this.post('/tou-zi-ping-te/:id/delete', middleware.isLoggedIn, touziPingteCtrl.DELETE);
     }
 }
 

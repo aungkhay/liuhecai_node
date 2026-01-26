@@ -2,7 +2,7 @@ const ZodiacHelper = require('../../helpers/ZodiacHelper');
 const CommonHelper = require('../../helpers/CommonHelper');
 const RedisHelper = require('../../helpers/RedisHelper');
 const MyResponse = require('../../helpers/MyResponse');
-const { Banner, AomenRecord, HongKongRecord, PlatformRecord, Config, ResultGuess } = require('../../models');
+const { Banner, AomenRecord, HongKongRecord, PlatformRecord, Config, ResultGuess, TouZiPingTe } = require('../../models');
 const { Op } = require('sequelize');
 
 class Controller {
@@ -173,6 +173,19 @@ class Controller {
                 order: [['id', 'DESC']],
             });
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', configs);
+        } catch (error) {
+            console.error(error);
+            return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+        }
+    }
+
+    GET_TOU_ZI_PING_TE = async (req, res) => {
+        try {
+            const records = await TouZiPingTe.findAll({
+                order: [['id', 'DESC']],
+                limit: 20
+            });
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', records);
         } catch (error) {
             console.error(error);
             return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
