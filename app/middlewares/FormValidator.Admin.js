@@ -31,3 +31,45 @@ exports.create_result_guess = () => {
         check('zodiac_attr').not().isEmpty().withMessage('生肖属性不能为空'),
     ]
 }
+
+exports.update_qi_xiaos = () => {
+    return [
+        check('type').not().isEmpty().withMessage('配置类型不能为空')
+            .bail()
+            .isIn(['qi_xiao']).withMessage('配置类型值不正确'),
+        check('xiaos')
+            .isArray({ min: 7, max: 7 })
+            .withMessage('生肖数组不能为空'),
+        check('numbers')
+            .isArray({ min: 7, max: 7 })
+            .withMessage('号码数组不能为空'),
+    ]
+}
+
+exports.update_wu_xiaos = () => {
+    return [
+        check('type').not().isEmpty().withMessage('配置类型不能为空')
+            .bail()
+            .isIn(['wu_xiao']).withMessage('配置类型值不正确'),
+        check('xiaos')  
+            .isArray({ min: 5, max: 5 })
+            .withMessage('生肖数组不能为空'),
+        check('numbers')
+            .isArray({ min: 5, max: 5 })
+            .withMessage('号码数组不能为空'),
+    ]
+}
+
+exports.update_san_xiaos = () => {
+    return [
+        check('type').not().isEmpty().withMessage('配置类型不能为空')
+            .bail()
+            .isIn(['san_xiao']).withMessage('配置类型值不正确'),
+        check('xiaos')
+            .isArray({ min: 3, max: 3 })
+            .withMessage('生肖数组不能为空'),
+        check('numbers')
+            .isArray({ min: 3, max: 3 })
+            .withMessage('号码数组不能为空'),
+    ]
+}

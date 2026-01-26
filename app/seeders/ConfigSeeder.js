@@ -9,6 +9,27 @@ module.exports = async () => {
             val: '2025',
             description: 'Year 2025',
             data_type: 'string'
+        },
+        {
+            type: 'qi_xiao',
+            title: '七肖',
+            val: '',
+            description: '',
+            data_type: 'string'
+        },
+        {
+            type: 'wu_xiao',
+            title: '五肖',
+            val: '',
+            description: '',
+            data_type: 'string'
+        },
+        {
+            type: 'san_xiao',
+            title: '三肖',
+            val: '',
+            description: '',
+            data_type: 'string'
         }
     ];
 

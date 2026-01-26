@@ -64,7 +64,7 @@ class Helper {
             { id: 7, num: "07", wuxing: "木", color: "red", old_even: "odd" },
             { id: 8, num: "08", wuxing: "木", color: "red", old_even: "even" },
             { id: 9, num: "09", wuxing: "火", color: "blue", old_even: "odd" },
-            { id: 10, num: "10", wuxing: "火", color: "blue", old_even: "odd" },
+            { id: 10, num: "10", wuxing: "火", color: "blue", old_even: "even" },
             { id: 11, num: "11", wuxing: "金", color: "green", old_even: "even" },
             { id: 12, num: "12", wuxing: "金", color: "red", old_even: "odd" },
             { id: 13, num: "13", wuxing: "水", color: "red", old_even: "even" },

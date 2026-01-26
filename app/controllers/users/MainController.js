@@ -165,6 +165,19 @@ class Controller {
             return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
         }
     }
+
+    GET_XIAO_MA = async (req, res) => {
+        try {
+            const configs = await Config.findAll({
+                where: { type: ['qi_xiao', 'wu_xiao', 'san_xiao'] },
+                order: [['id', 'DESC']],
+            });
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', configs);
+        } catch (error) {
+            console.error(error);
+            return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+        }
+    }
 }
 
 module.exports = Controller;

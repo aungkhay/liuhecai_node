@@ -2,6 +2,7 @@ const MyResponse = require('../../helpers/MyResponse');
 const CommonHelper = require('../../helpers/CommonHelper');
 const RedisHelper = require('../../helpers/RedisHelper');
 const { Config } = require('../../models');
+let { validationResult } = require('express-validator');
 
 class Controller {
     constructor (app) {
@@ -31,6 +32,40 @@ class Controller {
                 order: [['id', 'DESC']],
             });
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', configs);
+        } catch (error) {
+            console.error(error);
+            return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+        }
+    }
+
+    XIAO_MA = async (req, res) => {
+        try {
+            const configs = await Config.findAll({
+                where: { type: ['qi_xiao', 'wu_xiao', 'san_xiao'] },
+                order: [['id', 'DESC']],
+            });
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', configs);
+        } catch (error) {
+            console.error(error);
+            return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+        }
+    }
+
+    UPDATE_XIAO = async (req, res) => {
+        try {
+            const err = validationResult(req);
+            const errors = this.commonHelper.validateForm(err);
+            if (!err.isEmpty()) {
+                return MyResponse(res, this.ResCode.VALIDATE_FAIL.code, false, this.ResCode.VALIDATE_FAIL.msg, {}, errors);
+            }
+
+            const { type, xiaos, numbers } = req.body;
+
+            await Config.update(
+                { val: `${xiaos.join(',')}|${numbers.join(',')}` },
+                { where: { type: type } }
+            );
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', {});
         } catch (error) {
             console.error(error);
             return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
