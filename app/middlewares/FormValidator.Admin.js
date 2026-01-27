@@ -82,3 +82,11 @@ exports.create_touzi_pingte = () => {
         check('zodiac_name').not().isEmpty().withMessage('生肖名称不能为空'),
     ]
 }
+
+exports.create_double_color = () => {
+    return [
+        check('batch_number').not().isEmpty().withMessage('期数不能为空'),
+        check('color_one').not().isEmpty().withMessage('颜色一不能为空'),
+        check('color_two').not().isEmpty().withMessage('颜色二不能为空'),
+    ]
+}

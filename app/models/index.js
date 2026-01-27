@@ -8,6 +8,7 @@ const HongKongRecord = require('./HongKongRecord');
 const PlatformRecord = require('./PlatformRecord');
 const ResultGuess = require('./ResultGuess');
 const TouZiPingTe = require('./TouZiPingTe');
+const DoubleColor = require('./DoubleColor');
 
 const models = {
     Banner,
@@ -18,6 +19,7 @@ const models = {
     PlatformRecord,
     ResultGuess,
     TouZiPingTe,
+    DoubleColor,
 }
 
 // Export models + db connection

@@ -65,6 +65,14 @@ class AdminRoute extends express.Router {
         this.post('/tou-zi-ping-te/create', FormValidator.create_touzi_pingte(), middleware.isLoggedIn, touziPingteCtrl.CREATE);
         this.post('/tou-zi-ping-te/:id/update', FormValidator.create_touzi_pingte(), middleware.isLoggedIn, touziPingteCtrl.UPDATE);
         this.post('/tou-zi-ping-te/:id/delete', middleware.isLoggedIn, touziPingteCtrl.DELETE);
+
+        // Double Color Routes
+        const DoubleColorController = require('../controllers/admins/DoubleColorController');
+        const doubleColorCtrl = new DoubleColorController(app);
+        this.get('/double-color', middleware.isLoggedIn, doubleColorCtrl.INDEX);
+        this.post('/double-color/create', FormValidator.create_double_color(), middleware.isLoggedIn, doubleColorCtrl.CREATE);
+        this.post('/double-color/:id/update', FormValidator.create_double_color(), middleware.isLoggedIn, doubleColorCtrl.UPDATE);
+        this.post('/double-color/:id/delete', middleware.isLoggedIn, doubleColorCtrl.DELETE);
     }
 }
 

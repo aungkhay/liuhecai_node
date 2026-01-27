@@ -13,6 +13,7 @@ class UserRoute extends express.Router {
         this.get('/result-guess', mainCtrl.RESULT_GUESS);
         this.get('/get-xiao-ma', mainCtrl.GET_XIAO_MA);
         this.get('/tou-zi-ping-te', mainCtrl.GET_TOU_ZI_PING_TE);
+        this.get('/double-color', mainCtrl.GET_DOUBLE_COLOR);
     }
 }
 

@@ -1,5 +1,5 @@
 const MyResponse = require('../../helpers/MyResponse');
-const { AomenRecord, HongKongRecord, PlatformRecord, db, ResultGuess, TouZiPingTe } = require('../../models');
+const { AomenRecord, HongKongRecord, PlatformRecord, db, ResultGuess, TouZiPingTe, DoubleColor } = require('../../models');
 const CommonHelper = require('../../helpers/CommonHelper');
 const ZodiacHelper = require('../../helpers/ZodiacHelper');
 let { validationResult } = require('express-validator');
@@ -94,6 +94,7 @@ class Controller {
             }
 
             if (lottery_type === 'platform') {
+                // Result Guess Logic
                 const resultGuess = await ResultGuess.findOne({ where: { result_match: 0 }, attributes: ['id', 'zodiac_attr'] });
                 if (!resultGuess) {
                     return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '请先创建结果竞猜记录', {});
@@ -101,11 +102,12 @@ class Controller {
                 const attributes = this.zodiacHelper.zodiacAttributes();
                 const zodiacs = attributes[resultGuess.zodiac_attr];
                 let result_match = 2;
-                const zodiacName = req.body.num7_desc.split(''); // 鼠/金/blue
+                const zodiacName = req.body.num7_desc.split('/'); // 鼠/金/blue
                 if (zodiacs.includes(zodiacName[0])) {
                     result_match = 1;
                 }
 
+                // TouZiPingTe Logic
                 const touziPingTeRecord = await TouZiPingTe.findOne({
                     attributes: ['id', 'batch_start', 'batch_end', 'zodiac_name', 'open_count'],
                     order: [['id', 'DESC']],
@@ -121,8 +123,14 @@ class Controller {
                 }
                 let nameArr = [];
                 for (let i = 1; i <= 7; i++) {
-                    const zName = req.body[`num${i}_desc`].split('');
+                    const zName = req.body[`num${i}_desc`].split('/');
                     nameArr.push(zName[0]);
+                }
+
+                // Double Color
+                const doubleColor = await DoubleColor.findOne({ where: { year: req.body.year, batch_number: req.body.batch_number } });
+                if (!doubleColor) {
+                    return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '请先创建大神双波记录', {});
                 }
 
                 const t = await db.transaction();
@@ -135,6 +143,7 @@ class Controller {
                     if (batch_number == touziPingTeRecord.batch_end) {
                         await touziPingTeRecord.update({ is_finished: 1 }, { transaction: t });
                     }
+                    await doubleColor.update({ result_number: req.body.num7, zodiac_name: zodiacName[0], match_color: zodiacName[2]  }, { transaction: t });
                     await t.commit();
                 } catch (error) {
                     await t.rollback();
