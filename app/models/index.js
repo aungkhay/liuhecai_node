@@ -9,6 +9,22 @@ const PlatformRecord = require('./PlatformRecord');
 const ResultGuess = require('./ResultGuess');
 const TouZiPingTe = require('./TouZiPingTe');
 const DoubleColor = require('./DoubleColor');
+const BetCategory = require('./BetCategory');
+const BetSubCategory = require('./BetSubCategory');
+const BetItem = require('./BetItem');
+const BetItemNumber = require('./BetItemNumber');
+
+// ========== BetCategory ↔️ BetSubCategory ========== 
+BetCategory.hasMany(BetSubCategory, { foreignKey: 'category_id', as: 'subCategories' });
+BetSubCategory.belongsTo(BetCategory, { foreignKey: 'category_id', as: 'category' });
+
+// ========== BetSubCategory ↔️ BetItem ========== 
+BetSubCategory.hasMany(BetItem, { foreignKey: 'sub_category_id', as: 'betItems' });
+BetItem.belongsTo(BetSubCategory, { foreignKey: 'sub_category_id', as: 'subCategory' });
+
+// ========== BetItem ↔️ BetItemNumber ==========
+BetItem.hasMany(BetItemNumber, { foreignKey: 'bet_item_id', as: 'betItemNumbers' });
+BetItemNumber.belongsTo(BetItem, { foreignKey: 'bet_item_id', as: 'betItem' });
 
 const models = {
     Banner,
@@ -20,6 +36,10 @@ const models = {
     ResultGuess,
     TouZiPingTe,
     DoubleColor,
+    BetCategory,
+    BetSubCategory,
+    BetItem,
+    BetItemNumber,
 }
 
 // Export models + db connection
