@@ -55,12 +55,6 @@ BetItem.init({
     sequelize,
     modelName: 'BetItem',
     tableName: 'bet_items',
-    indexes: [
-        {
-            name: 'idx_category_subcategory',
-            fields: ['category_id', 'sub_category_id']
-        }
-    ]
 })
 
 module.exports = BetItem

@@ -174,23 +174,23 @@ module.exports = async () => {
     }
     // 二连尾 LXLW_2LW
     const sub20 = [];
-    for (let i = 0; i < zodiacName.length; i++) {
-        sub20.push({ sub_category_id: 20, code: 'LXLW_2LW_' + String(zodiacCode[i]), name: zodiacName[i], odds: 4.801, item_type: 'simple' });
+    for (let i = 0; i < 10; i++) {
+        sub20.push({ sub_category_id: 20, code: 'LXLW_2LW_' + String(i), name: `${i}尾`, odds: 4.801, item_type: 'simple' });
     }
     // 三连尾 LXLW_3LW
     const sub21 = [];
-    for (let i = 0; i < zodiacName.length; i++) {
-        sub21.push({ sub_category_id: 21, code: 'LXLW_3LW_' + String(zodiacCode[i]), name: zodiacName[i], odds: 13.513, item_type: 'simple' });
+    for (let i = 0; i < 10; i++) {
+        sub21.push({ sub_category_id: 21, code: 'LXLW_3LW_' + String(i), name: `${i}尾`, odds: 13.513, item_type: 'simple' });
     }
     // 四连尾 LXLW_4LW
     const sub22 = [];
-    for (let i = 0; i < zodiacName.length; i++) {
-        sub22.push({ sub_category_id: 22, code: 'LXLW_4LW_' + String(zodiacCode[i]), name: zodiacName[i], odds: 40.824, item_type: 'simple' });
+    for (let i = 0; i < 10; i++) {
+        sub22.push({ sub_category_id: 22, code: 'LXLW_4LW_' + String(i), name: `${i}尾`, odds: 40.824, item_type: 'simple' });
     }
     // 五连尾 LXLW_5LW
     const sub23 = [];
-    for (let i = 0; i < zodiacName.length; i++) {
-        sub23.push({ sub_category_id: 23, code: 'LXLW_5LW_' + String(zodiacCode[i]), name: zodiacName[i], odds: 121.951, item_type: 'simple' });
+    for (let i = 0; i < 10; i++) {
+        sub23.push({ sub_category_id: 23, code: 'LXLW_5LW_' + String(i), name: `${i}尾`, odds: 121.951, item_type: 'simple' });
     }
     
     // 连码 LM
@@ -211,13 +211,15 @@ module.exports = async () => {
     }
     // 总肖 YXZXPTWS_ZX
     const sub31 = [];
-    for (let i = 0; i < zodiacName.length; i++) {
-        sub31.push({ sub_category_id: 31, code: 'YXZXPTWS_ZX_' + String(zodiacCode[i]), name: zodiacName[i], odds: 5.955, item_type: 'number_group' });
+    const zongxiaoName = ['2肖', '3肖', '4肖', '5肖', '6肖', '7肖', '总肖单', '总肖双'];
+    const zongxiaoCode = ['2LX', '3LX', '4LX', '5LX', '6LX', '7LX', 'ZX_DAN', 'ZX_SHUANG'];
+    for (let i = 0; i < zongxiaoName.length; i++) {
+        sub31.push({ sub_category_id: 31, code: 'YXZXPTWS_ZX_' + String(zongxiaoCode[i]), name: zongxiaoName[i], odds: 5.955, item_type: 'number_group' });
     }
     // 尾数 YXZXPTWS_WS
     const sub32 = [];
     for (let i = 0; i <= 9; i++) {
-        sub32.push({ sub_category_id: 32, code: 'YXZXPTWS_WS_' + String(i), name: String(i), odds: 1.778, item_type: 'simple' });
+        sub32.push({ sub_category_id: 32, code: 'YXZXPTWS_WS_' + String(i), name: `${String(i)}尾`, odds: 1.778, item_type: 'simple' });
     }
 
     // 总和 ZH

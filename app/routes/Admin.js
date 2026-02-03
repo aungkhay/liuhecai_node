@@ -73,6 +73,12 @@ class AdminRoute extends express.Router {
         this.post('/double-color/create', FormValidator.create_double_color(), middleware.isLoggedIn, doubleColorCtrl.CREATE);
         this.post('/double-color/:id/update', FormValidator.create_double_color(), middleware.isLoggedIn, doubleColorCtrl.UPDATE);
         this.post('/double-color/:id/delete', middleware.isLoggedIn, doubleColorCtrl.DELETE);
+
+        // Bet Routes
+        const BetController = require('../controllers/admins/BetController');
+        const betCtrl = new BetController(app);
+        this.get('/bet/categories', middleware.isLoggedIn, betCtrl.GET_CATEGORY_LIST);
+        this.get('/bet/items/:sub_category_id', middleware.isLoggedIn, betCtrl.GET_BET_ITEMS);
     }
 }
 
