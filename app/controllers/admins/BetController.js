@@ -1,6 +1,7 @@
 const MyResponse = require('../../helpers/MyResponse');
 const CommonHelper = require('../../helpers/CommonHelper');
-const { BetCategory, BetSubCategory, BetItem } = require('../../models');
+const { BetCategory, BetSubCategory, BetItem, Bet } = require('../../models');
+let { validationResult } = require('express-validator');
 
 class Controller {
     constructor() {
@@ -36,6 +37,22 @@ class Controller {
             return MyResponse(res, this.ResCode.SUCCESS.code, true, this.ResCode.SUCCESS.msg, betItems);
         } catch (error) {
             console.error('Error in GET_BET_ITEMS:', error);
+            return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+        }
+    }
+
+    DO_BET = async (req, res) => {
+        try {
+            const err = validationResult(req);
+            const errors = this.commonHelper.validateForm(err);
+            if (!err.isEmpty()) {
+                return MyResponse(res, this.ResCode.VALIDATE_FAIL.code, false, this.ResCode.VALIDATE_FAIL.msg, {}, errors);
+            }
+
+            await Bet.bulkCreate(req.body.bets);
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, this.ResCode.SUCCESS.msg, {});
+        } catch (error) {
+            console.error('Error in DO_BET:', error);
             return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
         }
     }

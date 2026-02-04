@@ -79,6 +79,7 @@ class AdminRoute extends express.Router {
         const betCtrl = new BetController(app);
         this.get('/bet/categories', middleware.isLoggedIn, betCtrl.GET_CATEGORY_LIST);
         this.get('/bet/items/:sub_category_id', middleware.isLoggedIn, betCtrl.GET_BET_ITEMS);
+        this.post('/bet/do-bet', FormValidator.do_bet(), middleware.isLoggedIn, betCtrl.DO_BET);
     }
 }
 

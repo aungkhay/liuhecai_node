@@ -14,7 +14,7 @@ const db = new Sequelize(env[`DB_NAME`], env[`DB_USER`], env[`DB_PASS`], {
     },
     logging: console.log,
     logging: (str) => {
-        queryLogger(str.replace('Executing (default): ', ''));
+        // queryLogger(str.replace('Executing (default): ', ''));
     },
     pool: {
         max: 20,

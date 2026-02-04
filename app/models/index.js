@@ -13,6 +13,7 @@ const BetCategory = require('./BetCategory');
 const BetSubCategory = require('./BetSubCategory');
 const BetItem = require('./BetItem');
 const BetItemNumber = require('./BetItemNumber');
+const Bet = require('./Bet');
 
 // ========== BetCategory ↔️ BetSubCategory ========== 
 BetCategory.hasMany(BetSubCategory, { foreignKey: 'category_id', as: 'subCategories' });
@@ -25,6 +26,12 @@ BetItem.belongsTo(BetSubCategory, { foreignKey: 'sub_category_id', as: 'subCateg
 // ========== BetItem ↔️ BetItemNumber ==========
 BetItem.hasMany(BetItemNumber, { foreignKey: 'bet_item_id', as: 'betItemNumbers' });
 BetItemNumber.belongsTo(BetItem, { foreignKey: 'bet_item_id', as: 'betItem' });
+
+// ========== BetCategory & BetSubCategory ↔️ Bet ==========
+BetCategory.hasMany(Bet, { foreignKey: 'category_id', as: 'bets' });
+Bet.belongsTo(BetCategory, { foreignKey: 'category_id', as: 'category' });
+BetSubCategory.hasMany(Bet, { foreignKey: 'sub_category_id', as: 'bets' });
+Bet.belongsTo(BetSubCategory, { foreignKey: 'sub_category_id', as: 'subCategory' });
 
 const models = {
     Banner,
@@ -40,7 +47,8 @@ const models = {
     BetSubCategory,
     BetItem,
     BetItemNumber,
-}
+    Bet,
+};
 
 // Export models + db connection
 module.exports = {

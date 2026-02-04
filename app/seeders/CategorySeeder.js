@@ -19,7 +19,7 @@ module.exports = async () => {
         { category_id: 1, name: '号码', code: 'TM_HM', limit_bet_count: 1 },
         { category_id: 1, name: '色波半波', code: 'TM_SBB', limit_bet_count: 1 },
         { category_id: 1, name: '特肖头尾数', code: 'TM_TXTWS', limit_bet_count: 1 },
-        { category_id: 1, name: '合肖', code: 'TM_HX', limit_bet_count: 2 },
+        { category_id: 1, name: '合肖', code: 'TM_HX', limit_bet_count: 2, odds: {"2HX": 5.955,"3HX": 3.95,"4HX": 3.97,"5HX": 3.97,"6HX": 3.97,"7HX": 3.97,"8HX": 3.97,"9HX": 3.97, "10HX": 3.97,"11HX": 3.97} },
         { category_id: 1, name: '五行', code: 'TM_WX', limit_bet_count: 1 },
         // 正码任选一 | 正码1-6 | 正肖七色波
         { category_id: 2, name: '正码任选一', code: 'ZM_RX1', limit_bet_count: 1 },
