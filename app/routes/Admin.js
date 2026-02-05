@@ -80,6 +80,8 @@ class AdminRoute extends express.Router {
         this.get('/bet/categories', middleware.isLoggedIn, betCtrl.GET_CATEGORY_LIST);
         this.get('/bet/items/:sub_category_id', middleware.isLoggedIn, betCtrl.GET_BET_ITEMS);
         this.post('/bet/do-bet', FormValidator.do_bet(), middleware.isLoggedIn, betCtrl.DO_BET);
+        this.get('/bet/history', middleware.isLoggedIn, betCtrl.BET_HISTORY);
+        this.get('/bet/summary', middleware.isLoggedIn, betCtrl.BET_SUMMARY);
     }
 }
 
