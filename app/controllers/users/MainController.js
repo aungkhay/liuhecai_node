@@ -132,7 +132,7 @@ class Controller {
                 },
                 offset: offset,
                 limit: perPage,
-                order: [['id', 'DESC']],
+                order: [['draw_date', 'DESC']],
             });
 
             const data = {
