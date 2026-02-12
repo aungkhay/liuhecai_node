@@ -26,16 +26,16 @@ class Cron {
 
     START = () => {
 
-        // Runs once per day at 1:00 AM
-        cron.schedule('0 1 * * *', this.GET_AM_HISTORY).start();
-        cron.schedule('0 1 * * *', this.GET_HK_HISTORY).start();
+        // Runs once per day at 21:45 PM
+        cron.schedule('45 21 * * *', this.GET_AM_HISTORY).start();
+        cron.schedule('45 21 * * *', this.GET_HK_HISTORY).start();
 
     }
 
     GET_AM_HISTORY = async () => {
         try {
             console.log('Fetching AM history...');
-            const url = 'http://kj.bw7788.com/t?token=1383B87F1BB79303&code=aomen6hc&rows=365&format=json';    
+            const url = 'http://kj.bw7788.com/t?token=1383B87F1BB79303&code=aomen6hc&rows=1&format=json';    
             await this.GET_HISTORY(url, 'aomen');
         } catch (error) {
             console.log(error);
@@ -45,7 +45,7 @@ class Cron {
     GET_HK_HISTORY = async () => {
         try {
             console.log('Fetching HK history...');
-            const url = 'http://kj.bw7788.com/t?token=1327A2EF3BD58216&code=hklhc&rows=365&format=json';
+            const url = 'http://kj.bw7788.com/t?token=1327A2EF3BD58216&code=hklhc&rows=1&format=json';
             await this.GET_HISTORY(url, 'hk');
         } catch (error) {
             console.log(error);

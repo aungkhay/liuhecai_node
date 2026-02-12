@@ -1,7 +1,18 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../connections/Mysql');
 
-class AomenRecord extends Model {}
+class AomenRecord extends Model {
+    toJSON() {
+        let attributes = Object.assign({}, this.get())
+        if (attributes.batch_number !== undefined) {
+            // remove leading 2 characters if they are "20"
+            if (attributes.batch_number.startsWith('20')) {
+                attributes.batch_number = attributes.batch_number.substring(2);
+            }
+        }
+        return attributes
+    }
+}
 
 AomenRecord.init({
     id: {

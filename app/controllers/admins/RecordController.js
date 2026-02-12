@@ -15,7 +15,7 @@ class Controller {
     PLATFORM_LAST_BATCH_NUMBER = async (req, res) => {
         try {
             const record = await PlatformRecord.findOne({
-                order: [['id', 'DESC']],
+                order: [['draw_date', 'DESC']],
             });
             let last_batch_number = 1;
             if (record) {
