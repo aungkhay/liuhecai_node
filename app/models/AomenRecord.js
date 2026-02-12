@@ -84,6 +84,7 @@ AomenRecord.init({
     draw_date: {
         type: DataTypes.DATE,
         allowNull: false,
+        unique: true,
     },
 }, {
     sequelize,
