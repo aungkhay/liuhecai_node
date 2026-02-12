@@ -95,7 +95,7 @@ class Controller {
                 Model = PlatformRecord;
             }
             const record = await Model.findOne({
-                order: [['id', 'DESC']],
+                order: [['draw_date', 'DESC']],
             });
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', record ? record : {});
         } catch (error) {
