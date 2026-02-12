@@ -39,6 +39,13 @@ APP.use('/api', new UserRoute(APP));
 const AdminRoute = require('./app/routes/Admin');
 APP.use('/admin', new AdminRoute(APP));
 
+// Cron Jobs
+const Cron = require('./app/cron');
+const cron = new Cron();
+cron.START();
+// cron.GET_HK_HISTORY();
+// cron.GET_AM_HISTORY();
+
 // Start Server
 APP.listen(PORT, HOST, () => {
     console.log(`\x1b[34m[APP]\x1b[0m Listening on ====>`, `\x1b[34mhttp://${HOST}:${PORT}\x1b[0m`);
