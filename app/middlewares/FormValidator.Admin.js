@@ -102,3 +102,9 @@ exports.do_bet = () => {
         check('bets.*.bet_amount').not().isEmpty().withMessage('投注金额不能为空'),
     ]
 }
+
+exports.create_reference_link = () => {
+    return [
+        check('url').not().isEmpty().withMessage('链接URL不能为空')
+    ]
+}

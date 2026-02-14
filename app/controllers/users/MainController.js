@@ -2,7 +2,7 @@ const ZodiacHelper = require('../../helpers/ZodiacHelper');
 const CommonHelper = require('../../helpers/CommonHelper');
 const RedisHelper = require('../../helpers/RedisHelper');
 const MyResponse = require('../../helpers/MyResponse');
-const { Banner, AomenRecord, HongKongRecord, PlatformRecord, Config, ResultGuess, TouZiPingTe, DoubleColor } = require('../../models');
+const { Banner, AomenRecord, HongKongRecord, PlatformRecord, Config, ResultGuess, TouZiPingTe, DoubleColor, ReferenceLink } = require('../../models');
 const { Op } = require('sequelize');
 
 class Controller {
@@ -199,6 +199,19 @@ class Controller {
                 limit: 7
             });
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', records);
+        } catch (error) {
+            console.error(error);
+            return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+        }
+    }
+
+    GET_REFERENCE_LINKS = async (req, res) => {
+        try {
+            const links = await ReferenceLink.findAll({
+                where: { image: { [Op.ne]: null } },
+                order: [['createdAt', 'DESC']]
+            });
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, this.ResCode.SUCCESS.msg, links);
         } catch (error) {
             console.error(error);
             return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});

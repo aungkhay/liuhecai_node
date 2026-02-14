@@ -82,6 +82,15 @@ class AdminRoute extends express.Router {
         this.post('/bet/do-bet', FormValidator.do_bet(), middleware.isLoggedIn, betCtrl.DO_BET);
         this.get('/bet/history', middleware.isLoggedIn, betCtrl.BET_HISTORY);
         this.get('/bet/summary', middleware.isLoggedIn, betCtrl.BET_SUMMARY);
+
+        // Reference Link Routes
+        const ReferenceLinkController = require('../controllers/admins/ReferenceLinkController');
+        const referenceLinkCtrl = new ReferenceLinkController(app);
+        this.get('/reference-links', middleware.isLoggedIn, referenceLinkCtrl.INDEX);
+        this.post('/reference-links/create', FormValidator.create_reference_link(), middleware.isLoggedIn, referenceLinkCtrl.CREATE);
+        this.post('/reference-links/:id/upload', middleware.isLoggedIn, referenceLinkCtrl.UPLOAD);
+        this.post('/reference-links/:id/update', FormValidator.create_reference_link(), middleware.isLoggedIn, referenceLinkCtrl.UPDATE);
+        this.post('/reference-links/:id/delete', middleware.isLoggedIn, referenceLinkCtrl.DELETE);
     }
 }
 

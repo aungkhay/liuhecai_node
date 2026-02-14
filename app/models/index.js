@@ -1,6 +1,7 @@
 const db = require('../connections/Mysql');
 
 const Banner = require('./Banner');
+const ReferenceLink = require('./ReferenceLink');
 const Config = require('./Config');
 const User = require('./User');
 const AomenRecord = require('./AomenRecord');
@@ -35,6 +36,7 @@ Bet.belongsTo(BetSubCategory, { foreignKey: 'sub_category_id', as: 'subCategory'
 
 const models = {
     Banner,
+    ReferenceLink,
     Config,
     User,
     AomenRecord,
