@@ -214,6 +214,12 @@ class Helper {
             "4号汉奸梁鸿志": ["龙","鸡","猴"]
         }
     }
+
+    getWuxingById = (num) => {
+        const zodiacNumbers = this.zodiacNumbers();
+        const result = zodiacNumbers.find(item => item.id === num);
+        return result ? result.wuxing : null;
+    }
 }
 
 module.exports = Helper;

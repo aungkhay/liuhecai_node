@@ -2,6 +2,7 @@ let cron = require('node-cron');
 const axios = require('axios');
 const ZodiacHelper = require('../helpers/ZodiacHelper');
 const { HongKongRecord, AomenRecord } = require('../models');
+const moment = require('moment');
 
 class Cron {
     constructor() {
@@ -19,33 +20,29 @@ class Cron {
             { animal: "dog", from_date: "2030-02-03", to_date: "2031-01-22" }
         ]
         this.zodiacHelper = new ZodiacHelper();
-        this.zodiacNumbers = this.zodiacHelper.zodiacNumbers();
-        this.zodiacs = this.zodiacHelper.zodiac();
-        this.comparisons = this.zodiacHelper.comparisons();
     }
 
     START = () => {
 
-        // Runs once per day at 21:45 PM
-        cron.schedule('45 21 * * *', this.GET_AM_HISTORY).start();
-        cron.schedule('45 21 * * *', this.GET_HK_HISTORY).start();
+        cron.schedule('40 21 * * *', () => this.GET_AM_HISTORY(1)).start();
+        cron.schedule('45 21 * * *', () => this.GET_HK_HISTORY(1)).start();
 
     }
 
-    GET_AM_HISTORY = async () => {
+    GET_AM_HISTORY = async (rows = 2000) => {
         try {
             console.log('Fetching AM history...');
-            const url = 'http://kj.bw7788.com/t?token=1383B87F1BB79303&code=aomen6hc&rows=1&format=json';    
+            const url = `http://vip.manycai.com/K2699e98b162094/MOLHC-${rows}.json`;
             await this.GET_HISTORY(url, 'aomen');
         } catch (error) {
             console.log(error);
         }
     }
 
-    GET_HK_HISTORY = async () => {
+    GET_HK_HISTORY = async (rows = 2000) => {
         try {
             console.log('Fetching HK history...');
-            const url = 'http://kj.bw7788.com/t?token=1327A2EF3BD58216&code=hklhc&rows=1&format=json';
+            const url = `http://vip.manycai.com/K2699e98b162094/XGLHC-${rows}.json`;
             await this.GET_HISTORY(url, 'hk');
         } catch (error) {
             console.log(error);
@@ -56,44 +53,31 @@ class Cron {
         try {
             const res = await axios.get(url);
             if (res.status === 200) {
-                const data = res.data.data;
+                const data = res.data;
 
                 const historyData = [];
                 data.forEach(item => {
-                    
-                    const batch_number = item.expect;
-                    const draw_date = item.opentime;
-                    const numbers = item.opencode.split(',').map(num => num.trim());
-                    const zodiac_year = this.zodiacYears.find(year => new Date(draw_date) >= new Date(year.from_date) && new Date(draw_date) <= new Date(year.to_date));
-                    const zodiacKey = zodiac_year ? zodiac_year.animal : null;
+
+                    const batch_number = item.issue;
+                    const draw_date = item.opendate;
+                    const numbers = item.attrs;
+                    const format = 'YYYY-MM-DD';
+                    const zodiac_year = this.zodiacYears.find(year => moment(draw_date).format(format) >= moment(year.from_date).format(format) && moment(draw_date).format(format) <= moment(year.to_date).format(format));
                     const year = zodiac_year.from_date.split('-')[0];
-                    
                     const obj = {
                         year: Number(year),
                         batch_number: batch_number,
                         draw_date: draw_date,
                     }
-                    const currentZodiac = this.zodiacs.find(zodiac => zodiac.key === zodiacKey);
-                    const ordered = this.zodiacHelper.zodiacOrder(currentZodiac.id);
-
                     for (let i = 0; i < numbers.length; i++) {
-                        const ele = numbers[i];
-                        obj[`num${i + 1}`] = Number(ele);
-                        
-                        for (let j = 0; j < ordered.length; j++) {
-                            const zodiacId = ordered[j];
-                            const z = this.zodiacs.find(z => z.id == zodiacId);
-                            if (z) {
-                                const zodiac = this.zodiacNumbers.find(zodiac => zodiac.num === ele);
-                                const comparison = this.comparisons.find(c => c.id === z.id);
-                                if (comparison.numbers.includes(Number(ele))) {
-                                    obj[`num${i + 1}_desc`] = `${z.name}/${zodiac.wuxing}/${zodiac.color}`;
-                                }
-                            }
-                        }
+                        const attr = numbers[i];
+                        obj[`num${i + 1}`] = Number(attr.num);
+                        const wuxing = this.zodiacHelper.getWuxingById(Number(attr.num));
+                        obj[`num${i + 1}_desc`] = `${attr.animal}/${wuxing}/${attr.color}`;
                     }
                     historyData.push(obj);
                 });
+
                 // chuck historyData into batches of 100 and insert into DB
                 const batchSize = 100;
                 for (let i = 0; i < historyData.length; i += batchSize) {
