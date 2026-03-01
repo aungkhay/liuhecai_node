@@ -24,7 +24,7 @@ class Cron {
 
     START = () => {
 
-        cron.schedule('40 21 * * *', () => this.GET_AM_HISTORY(1)).start();
+        cron.schedule('40 21 * * *', () => this.GET_NEW_AM_HISTORY()).start();
         cron.schedule('45 21 * * *', () => this.GET_HK_HISTORY(1)).start();
 
     }
@@ -92,6 +92,54 @@ class Cron {
 
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    GET_NEW_AM_HISTORY = async () => {
+        try {
+            const currentYear = new Date().getFullYear();
+            // Ref: https://macaujc.com/macaujc2
+            const url = `https://history.macaumarksix.com/history/macaujc2/y/${currentYear}`;
+            const res = await axios.get(url);
+            if (res.status === 200) {
+                const data = res.data;
+                if (data && data.code === 200) {
+
+                    const recordCount = await AomenRecord.count();
+
+                    // If no records in DB, get all history. Otherwise, get only the latest record (first item in data array) and check if it exists in DB. If not, insert it.
+                    const records = recordCount == 0 ? data.data : [data.data[0]]; 
+                    const historyData = [];
+
+                    records.forEach(item => {
+                        const format = 'YYYY-MM-DD';
+                        const zodiac_year = this.zodiacYears.find(year => moment(item.openTime).format(format) >= moment(year.from_date).format(format) && moment(item.openTime).format(format) <= moment(year.to_date).format(format));
+                        const year = zodiac_year.from_date.split('-')[0];
+                        const obj = {
+                            year: Number(year),
+                            batch_number: item.expect,
+                            draw_date: item.openTime,
+                        }
+                        const openCode = item.openCode.split(',');
+                        const openZodiac = item.zodiac.split(',');
+                        const openColor = item.wave.split(',');
+                        for (let i = 0; i < openCode.length; i++) {
+                            obj[`num${i + 1}`] = Number(openCode[i]);
+                            const wuxing = this.zodiacHelper.getWuxingById(Number(openCode[i]));
+                            obj[`num${i + 1}_desc`] = `${openZodiac[i]}/${wuxing}/${openColor[i]}`;
+                        }
+                        historyData.push(obj);
+                    });
+
+                    const batchSize = 100;
+                    for (let i = 0; i < historyData.length; i += batchSize) {
+                        const batch = historyData.slice(i, i + batchSize);
+                        await AomenRecord.bulkCreate(batch, { ignoreDuplicates: true });
+                    }
+                }
+            }
+        } catch (error) {
+            console.log(error); 
         }
     }
 }

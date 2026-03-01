@@ -44,7 +44,7 @@ const Cron = require('./app/cron');
 const cron = new Cron();
 cron.START();
 // cron.GET_HK_HISTORY();
-// cron.GET_AM_HISTORY();
+// cron.GET_NEW_AM_HISTORY();
 
 // Start Server
 APP.listen(PORT, HOST, () => {
