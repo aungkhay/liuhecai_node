@@ -50,6 +50,16 @@ Bet.init({
         type: DataTypes.STRING,
         allowNull: true,
     },
+    is_calculated: {
+        type: DataTypes.TINYINT,
+        allowNull: false,
+        defaultValue: 0
+    },
+    win_amount: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0.0
+    },
 }, {
     sequelize,
     modelName: 'Bet',

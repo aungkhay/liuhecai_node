@@ -1,7 +1,7 @@
 let cron = require('node-cron');
 const axios = require('axios');
 const ZodiacHelper = require('../helpers/ZodiacHelper');
-const { HongKongRecord, AomenRecord } = require('../models');
+const { HongKongRecord, AomenRecord, PlatformRecord, BetCategory } = require('../models');
 const moment = require('moment');
 
 class Cron {
@@ -140,6 +140,31 @@ class Cron {
             }
         } catch (error) {
             console.log(error); 
+        }
+    }
+
+    CALCULATE_CATEGORY_BET_1 = async (category, result) => {}
+    CALCULATE_CATEGORY_BET_2 = async (category, result) => {}
+    CALCULATE_CATEGORY_BET_3 = async (category, result) => {}
+    CALCULATE_CATEGORY_BET_4 = async (category, result) => {}
+    CALCULATE_CATEGORY_BET_5 = async (category, result) => {}
+    CALCULATE_CATEGORY_BET_6 = async (category, result) => {}
+    CALCULATE_CATEGORY_BET_7 = async (category, result) => {}
+    CALCULATE_CATEGORY_BET_8 = async (category, result) => {}
+    CALCULATE_CATEGORY_BET_9 = async (category, result) => {}
+
+    CALCULATE_BET = async () => {
+        try {
+            // 正码1+正码2+正码3+正码4+正码5+正码6  +   特码
+            const result = await PlatformRecord.findOne({ order: [['draw_date', 'DESC']] });
+
+            const categories = await BetCategory.findAll({ where: { is_active: 1 } });
+            for (let i = 0; i < categories.length; i++) {
+                const category = categories[i];
+                await this[`CALCULATE_CATEGORY_BET_${category.id}`](category, result);
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
 }
