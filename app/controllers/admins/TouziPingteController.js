@@ -16,7 +16,11 @@ class Controller {
             const range = await TouZiPingTe.findOne({
                 order: [['id', 'DESC']],
             });
-            let last_batch_number = 1;
+            const now = new Date();
+            const year = now.getFullYear();
+            let current_year = year;
+
+            let last_batch_number = `${current_year % 100}001`;
             if (!range) {
                 const record = await PlatformRecord.findOne({
                     order: [['id', 'DESC']],
@@ -25,10 +29,10 @@ class Controller {
                     last_batch_number = Number(record.batch_number) + 1;
                 }
             } else {
-                last_batch_number = range.batch_end + 1;
+                last_batch_number = Number(range.batch_end) + 1;
             }
             const data = {
-                last_batch_number: last_batch_number,
+                last_batch_number: Number(last_batch_number),
             }
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', data);
         } catch (error) {

@@ -2,6 +2,7 @@ const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../connections/Mysql');
 const BetCategory = require('./BetCategory');
 const BetSubCategory = require('./BetSubCategory');
+const PlatformRecord = require('./PlatformRecord');
 
 class Bet extends Model {}
 
@@ -27,6 +28,14 @@ Bet.init({
             key: 'id'
         },
         defaultValue: 0
+    },
+    record_id: {
+        type: DataTypes.BIGINT,
+        references: {
+            model: PlatformRecord,
+            key: 'id'
+        },
+        defaultValue: null
     },
     item_code: {
         type: DataTypes.STRING,
@@ -55,11 +64,16 @@ Bet.init({
         allowNull: false,
         defaultValue: 0
     },
+    is_win: {
+        type: DataTypes.TINYINT,
+        allowNull: false,
+        defaultValue: 0
+    },
     win_amount: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
         defaultValue: 0.0
-    },
+    }
 }, {
     sequelize,
     modelName: 'Bet',

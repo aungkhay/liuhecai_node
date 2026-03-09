@@ -17,12 +17,15 @@ class Controller {
             const record = await PlatformRecord.findOne({
                 order: [['draw_date', 'DESC']],
             });
-            let last_batch_number = 1;
-            if (record) {
-                last_batch_number = Number(record.batch_number) + 1;
-            }
+            
+            // batch number format: 26001
+            // 26 -> year, 001 -> batch number
+            const now = new Date();
+            const year = now.getFullYear();
+            let current_year = year;
+
             const data = {
-                last_batch_number: last_batch_number,
+                last_batch_number: record ? record.batch_number : `${current_year % 100}001`,
             }
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', data);
         } catch (error) {

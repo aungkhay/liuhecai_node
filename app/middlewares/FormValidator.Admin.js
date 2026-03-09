@@ -3,7 +3,10 @@ const { check } = require('express-validator');
 exports.create_record = () => {
     return [
         check('year').not().isEmpty().withMessage('年份不能为空'),
-        check('batch_number').not().isEmpty().withMessage('期数不能为空'),
+        // batch number format: 26001, where 26 -> year, 001 -> batch number
+        check('batch_number').not().isEmpty().withMessage('期数不能为空')
+            .bail()
+            .matches(/^\d{5}$/).withMessage('期数格式不正确'),
         check('lottery_type').not().isEmpty().withMessage('彩票类型不能为空')
             .bail()
             .isIn(['platform', 'aomen', 'hongkong']).withMessage('彩票类型值不正确'),

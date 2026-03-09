@@ -33,6 +33,8 @@ BetCategory.hasMany(Bet, { foreignKey: 'category_id', as: 'bets' });
 Bet.belongsTo(BetCategory, { foreignKey: 'category_id', as: 'category' });
 BetSubCategory.hasMany(Bet, { foreignKey: 'sub_category_id', as: 'bets' });
 Bet.belongsTo(BetSubCategory, { foreignKey: 'sub_category_id', as: 'subCategory' });
+PlatformRecord.hasMany(Bet, { foreignKey: 'record_id', as: 'bets' });
+Bet.belongsTo(PlatformRecord, { foreignKey: 'record_id', as: 'record' });
 
 const models = {
     Banner,
