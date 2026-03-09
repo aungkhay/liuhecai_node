@@ -26,10 +26,22 @@ class Controller {
                     order: [['id', 'DESC']],
                 });
                 if (record) {
-                    last_batch_number = Number(record.batch_number) + 1;
+                    // Check if the last record's batch number is from the current year
+                    const recordYear = Math.floor(Number(record.batch_number) / 1000);
+                    if (recordYear === current_year % 100) {
+                        last_batch_number = Number(record.batch_number);
+                    } else {
+                        last_batch_number = `${current_year % 100}001`;
+                    }
                 }
             } else {
-                last_batch_number = Number(range.batch_end) + 1;
+                // check if the last range's batch_end is from the current year
+                const rangeYear = Math.floor(Number(range.batch_end) / 1000);
+                if (rangeYear === current_year % 100) {
+                    last_batch_number = Number(range.batch_end);
+                } else {
+                    last_batch_number = `${current_year % 100}001`;
+                }
             }
             const data = {
                 last_batch_number: Number(last_batch_number),

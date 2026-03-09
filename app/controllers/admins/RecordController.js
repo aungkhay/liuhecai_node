@@ -23,9 +23,19 @@ class Controller {
             const now = new Date();
             const year = now.getFullYear();
             let current_year = year;
+            let last_batch_number = `${current_year % 100}001`;
+            if (record) {
+                // Check if the last record's batch number is from the current year
+                const recordYear = Math.floor(Number(record.batch_number) / 1000);
+                if (recordYear === current_year % 100) {
+                    last_batch_number = Number(record.batch_number);
+                } else {
+                    last_batch_number = `${current_year % 100}001`;
+                }
+            }
 
             const data = {
-                last_batch_number: record ? record.batch_number : `${current_year % 100}001`,
+                last_batch_number: Number(last_batch_number),
             }
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', data);
         } catch (error) {

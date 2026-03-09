@@ -15,7 +15,7 @@ DoubleColor.init({
         allowNull: false,
     },
     batch_number: {
-        type: DataTypes.INTEGER,     
+        type: DataTypes.STRING,     
         allowNull: false,
     },
     color_one: {

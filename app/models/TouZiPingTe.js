@@ -15,11 +15,11 @@ TouZiPingTe.init({
         allowNull: false,
     },
     batch_start: {
-        type: DataTypes.INTEGER,     
+        type: DataTypes.STRING,     
         allowNull: false,
     },
     batch_end: {
-        type: DataTypes.INTEGER,     
+        type: DataTypes.STRING,     
         allowNull: false,
     },
     zodiac_name: {
