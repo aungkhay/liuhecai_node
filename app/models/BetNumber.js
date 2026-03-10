@@ -1,23 +1,27 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../connections/Mysql');
-const BetItem = require('./BetItem');
+const Bet = require('./Bet');
 
-class BetItemNumber extends Model {}
+class BetNumber extends Model {}
 
-BetItemNumber.init({
+BetNumber.init({
     id: {
         type: DataTypes.BIGINT,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true,
     },
-    bet_item_id: {
+    bet_id: {
         type: DataTypes.BIGINT,
         references: {  
-            model: BetItem,
+            model: Bet,
             key: 'id'
         },
         defaultValue: 0
+    },
+    code: {
+        type: DataTypes.STRING,
+        allowNull: true,
     },
     number: {
         type: DataTypes.INTEGER,
@@ -25,8 +29,8 @@ BetItemNumber.init({
     },
 }, {
     sequelize,
-    modelName: 'BetItemNumber',
-    tableName: 'bet_item_numbers',
+    modelName: 'BetNumber',
+    tableName: 'bet_numbers',
 })
 
-module.exports = BetItemNumber
+module.exports = BetNumber

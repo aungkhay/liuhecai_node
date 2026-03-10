@@ -48,6 +48,7 @@ class AdminRoute extends express.Router {
         this.post('/lottery-records/create', FormValidator.create_record(), middleware.isLoggedIn,  recordCtrl.CREATE);
         this.post('/lottery-records/:id/update', FormValidator.create_record(), middleware.isLoggedIn, recordCtrl.UPDATE);
         this.post('/lottery-records/:id/delete', middleware.isLoggedIn, recordCtrl.DELETE);
+        this.get('/check-number-in-bets', middleware.isLoggedIn, recordCtrl.CHECK_NUMBER_IN_BETS);
 
         // Result Guess Routes
         const ResultGuessController = require('../controllers/admins/ResultGuessController');

@@ -85,6 +85,11 @@ PlatformRecord.init({
         type: DataTypes.DATE,
         allowNull: false,
     },
+    calculate_status: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        comment: '0-未计算, 1-计算中, 2-已计算',
+    },
 }, {
     sequelize,
     modelName: 'PlatformRecord',

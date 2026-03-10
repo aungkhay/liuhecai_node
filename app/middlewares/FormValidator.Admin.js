@@ -101,6 +101,7 @@ exports.do_bet = () => {
         check('bets.*.sub_category_id').not().isEmpty().withMessage('投注子类别ID不能为空'),
         check('bets.*.item_code').not().isEmpty().withMessage('投注项代码不能为空'),
         check('bets.*.item_name').not().isEmpty().withMessage('投注项名称不能为空'),
+        check('bets.*.numbers').isArray({ min: 1 }).withMessage('投注号码不能为空'),
         check('bets.*.odds').not().isEmpty().withMessage('投注项赔率不能为空'),
         check('bets.*.bet_amount').not().isEmpty().withMessage('投注金额不能为空'),
     ]

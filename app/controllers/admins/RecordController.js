@@ -1,8 +1,9 @@
 const MyResponse = require('../../helpers/MyResponse');
-const { AomenRecord, HongKongRecord, PlatformRecord, db, ResultGuess, TouZiPingTe, DoubleColor } = require('../../models');
+const { AomenRecord, HongKongRecord, PlatformRecord, db, ResultGuess, TouZiPingTe, DoubleColor, Bet, BetNumber } = require('../../models');
 const CommonHelper = require('../../helpers/CommonHelper');
 const ZodiacHelper = require('../../helpers/ZodiacHelper');
 let { validationResult } = require('express-validator');
+const { Op, literal, Sequelize  } = require('sequelize');
 
 class Controller {
     constructor (app) {
@@ -105,10 +106,19 @@ class Controller {
             if (existingRecord) {
                 return MyResponse(res, this.ResCode.ALREADY_EXISTS.code, false, '该期数记录已存在', {});
             }
+            const lastRecord = await Model.findOne({
+                order: [['draw_date', 'DESC']],
+            });
+            if (lastRecord && lastRecord.calculate_status === 0) {
+                return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '上一条记录未计算，请先计算后再创建新记录', {});
+            }
+            if (lastRecord && lastRecord.calculate_status === 1) {
+                return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '上一条记录正在计算中，请稍后再试', {});
+            }
 
             if (lottery_type === 'platform') {
                 // Result Guess Logic
-                const resultGuess = await ResultGuess.findOne({ where: { result_match: 0 }, attributes: ['id', 'zodiac_attr'] });
+                const resultGuess = await ResultGuess.findOne({ where: { batch_number: batch_number }, attributes: ['id', 'zodiac_attr'] });
                 if (!resultGuess) {
                     return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '请先创建结果竞猜记录', {});
                 }
@@ -219,8 +229,51 @@ class Controller {
             if (!record) {
                 return MyResponse(res, this.ResCode.NOT_FOUND.code, false, '记录未找到', {});
             }
-            await record.destroy();
+            if (record.calculate_status === 1) {
+                return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '记录正在计算中，无法删除', {});
+            }
+            if (record.calculate_status === 2) {
+                return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '记录已计算完成，无法删除', {});
+            }
+            const doubleColorRecord = await DoubleColor.findOne({ where: { batch_number: record.batch_number } });
+            const resultGuessRecord = await ResultGuess.findOne({ where: { batch_number: record.batch_number } });
+
+            const t = await db.transaction();
+            try {
+                await record.destroy({ transaction: t });
+                if (doubleColorRecord) {
+                    await doubleColorRecord.destroy({ transaction: t });
+                }
+                if (resultGuessRecord) {
+                    await resultGuessRecord.destroy({ transaction: t });
+                }
+                await t.commit();
+            } catch (error) {
+                await t.rollback();
+                return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+            }
+            
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '记录删除成功', {});
+        } catch (error) {
+            console.error(error);
+            return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+        }
+    }
+
+    CHECK_NUMBER_IN_BETS = async (req, res) => {
+        try {
+            const num = req.query.num || 0;
+
+            const betAmount = await Bet.sum('bet_amount', {
+                include: [{
+                    model: BetNumber,
+                    as: 'bet_numbers',
+                    where: { number: num },
+                    attributes: [],
+                }],
+            });
+
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, '检查完成', { num: num, total_bet_amount: betAmount || 0 });
         } catch (error) {
             console.error(error);
             return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});

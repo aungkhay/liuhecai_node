@@ -1,6 +1,6 @@
 const MyResponse = require('../../helpers/MyResponse');
 const CommonHelper = require('../../helpers/CommonHelper');
-const { BetCategory, BetSubCategory, BetItem, Bet } = require('../../models');
+const { BetCategory, BetSubCategory, BetItem, Bet, db, BetNumber } = require('../../models');
 let { validationResult } = require('express-validator');
 const { Op, fn, col } = require('sequelize');
 
@@ -50,8 +50,35 @@ class Controller {
             if (!err.isEmpty()) {
                 return MyResponse(res, this.ResCode.VALIDATE_FAIL.code, false, this.ResCode.VALIDATE_FAIL.msg, {}, errors);
             }
+            const bets = req.body.bets;
 
-            await Bet.bulkCreate(req.body.bets);
+            const t = await db.transaction();
+            try {
+                for (const bet of bets) {
+                    const betItem = await Bet.create({
+                        category_id: bet.category_id,
+                        sub_category_id: bet.sub_category_id,
+                        item_code: bet.item_code,
+                        item_name: bet.item_name,
+                        odds: bet.odds,
+                        bet_amount: bet.bet_amount,
+                    }, { transaction: t });
+                    const numbers = [];
+                    for (const num of bet.numbers) {
+                        numbers.push({
+                            bet_id: betItem.id,
+                            code: num.code,
+                            number: num.number,
+                        });
+                    }
+                    await BetNumber.bulkCreate(numbers, { transaction: t });
+                }
+                await t.commit();
+            } catch (error) {
+                await t.rollback();
+                return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+            }
+
             return MyResponse(res, this.ResCode.SUCCESS.code, true, this.ResCode.SUCCESS.msg, {});
         } catch (error) {
             console.error('Error in DO_BET:', error);

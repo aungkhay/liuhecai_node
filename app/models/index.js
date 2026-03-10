@@ -13,7 +13,7 @@ const DoubleColor = require('./DoubleColor');
 const BetCategory = require('./BetCategory');
 const BetSubCategory = require('./BetSubCategory');
 const BetItem = require('./BetItem');
-const BetItemNumber = require('./BetItemNumber');
+const BetNumber = require('./BetNumber');
 const Bet = require('./Bet');
 
 // ========== BetCategory ↔️ BetSubCategory ========== 
@@ -24,9 +24,9 @@ BetSubCategory.belongsTo(BetCategory, { foreignKey: 'category_id', as: 'category
 BetSubCategory.hasMany(BetItem, { foreignKey: 'sub_category_id', as: 'betItems' });
 BetItem.belongsTo(BetSubCategory, { foreignKey: 'sub_category_id', as: 'subCategory' });
 
-// ========== BetItem ↔️ BetItemNumber ==========
-BetItem.hasMany(BetItemNumber, { foreignKey: 'bet_item_id', as: 'betItemNumbers' });
-BetItemNumber.belongsTo(BetItem, { foreignKey: 'bet_item_id', as: 'betItem' });
+// ========== Bet ↔️ BetNumber ==========
+Bet.hasMany(BetNumber, { foreignKey: 'bet_id', as: 'bet_numbers' });
+BetNumber.belongsTo(Bet, { foreignKey: 'bet_id', as: 'bet' });
 
 // ========== BetCategory & BetSubCategory ↔️ Bet ==========
 BetCategory.hasMany(Bet, { foreignKey: 'category_id', as: 'bets' });
@@ -50,7 +50,7 @@ const models = {
     BetCategory,
     BetSubCategory,
     BetItem,
-    BetItemNumber,
+    BetNumber,
     Bet,
 };
 
