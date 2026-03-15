@@ -21,18 +21,18 @@ class Helper {
 
     zodiac = () => {
         return [
-            { id: 1, name: '鼠', key: 'rat' },
-            { id: 2, name: '牛', key: 'ox' },
-            { id: 3, name: '虎', key: 'tiger' },
-            { id: 4, name: '兔', key: 'rabbit' },
-            { id: 5, name: '龙', key: 'dragon' },
-            { id: 6, name: '蛇', key: 'snake' },
-            { id: 7, name: '马', key: 'horse' },
-            { id: 8, name: '羊', key: 'goat' },
-            { id: 9, name: '猴', key: 'monkey' },
-            { id: 10, name: '鸡', key: 'rooster' },
-            { id: 11, name: '狗', key: 'dog' },
-            { id: 12, name: '猪', key: 'pig' }
+            { id: 1, name: '鼠', key: 'rat', code: 'SHU' },
+            { id: 2, name: '牛', key: 'ox', code: 'NIU' },
+            { id: 3, name: '虎', key: 'tiger', code: 'HU' },
+            { id: 4, name: '兔', key: 'rabbit', code: 'TU' },
+            { id: 5, name: '龙', key: 'dragon', code: 'LONG' },
+            { id: 6, name: '蛇', key: 'snake', code: 'SHE' },
+            { id: 7, name: '马', key: 'horse', code: 'MA' },
+            { id: 8, name: '羊', key: 'goat', code: 'YANG' },
+            { id: 9, name: '猴', key: 'monkey', code: 'HOU' },
+            { id: 10, name: '鸡', key: 'rooster', code: 'JI' },
+            { id: 11, name: '狗', key: 'dog', code: 'GOU' },
+            { id: 12, name: '猪', key: 'pig', code: 'ZHU' }
         ];
     }
 
@@ -55,55 +55,55 @@ class Helper {
 
     zodiacNumbers = () => {
         return [
-            { id: 1, num: "01", wuxing: "火", color: "red", old_even: "odd" },
+            { id: 1, num: "01", wuxing: "水", color: "red", old_even: "odd" },
             { id: 2, num: "02", wuxing: "火", color: "red", old_even: "even" },
-            { id: 3, num: "03", wuxing: "金", color: "blue", old_even: "odd" },
+            { id: 3, num: "03", wuxing: "火", color: "blue", old_even: "odd" },
             { id: 4, num: "04", wuxing: "金", color: "blue", old_even: "even" },
-            { id: 5, num: "05", wuxing: "土", color: "green", old_even: "odd" },
+            { id: 5, num: "05", wuxing: "金", color: "green", old_even: "odd" },
             { id: 6, num: "06", wuxing: "土", color: "green", old_even: "even" },
-            { id: 7, num: "07", wuxing: "木", color: "red", old_even: "odd" },
+            { id: 7, num: "07", wuxing: "土", color: "red", old_even: "odd" },
             { id: 8, num: "08", wuxing: "木", color: "red", old_even: "even" },
-            { id: 9, num: "09", wuxing: "火", color: "blue", old_even: "odd" },
-            { id: 10, num: "10", wuxing: "火", color: "blue", old_even: "even" },
-            { id: 11, num: "11", wuxing: "金", color: "green", old_even: "even" },
+            { id: 9, num: "09", wuxing: "木", color: "blue", old_even: "odd" },
+            { id: 10, num: "10", wuxing: "火", color: "blue", old_even: "odd" },
+            { id: 11, num: "11", wuxing: "火", color: "green", old_even: "even" },
             { id: 12, num: "12", wuxing: "金", color: "red", old_even: "odd" },
-            { id: 13, num: "13", wuxing: "水", color: "red", old_even: "even" },
+            { id: 13, num: "13", wuxing: "金", color: "red", old_even: "even" },
             { id: 14, num: "14", wuxing: "水", color: "blue", old_even: "odd" },
-            { id: 15, num: "15", wuxing: "木", color: "blue", old_even: "even" },
+            { id: 15, num: "15", wuxing: "水", color: "blue", old_even: "even" },
             { id: 16, num: "16", wuxing: "木", color: "green", old_even: "odd" },
-            { id: 17, num: "17", wuxing: "火", color: "green", old_even: "even" },
+            { id: 17, num: "17", wuxing: "木", color: "green", old_even: "even" },
             { id: 18, num: "18", wuxing: "火", color: "red", old_even: "odd" },
-            { id: 19, num: "19", wuxing: "土", color: "red", old_even: "even" },
+            { id: 19, num: "19", wuxing: "火", color: "red", old_even: "even" },
             { id: 20, num: "20", wuxing: "土", color: "blue", old_even: "even" },
-            { id: 21, num: "21", wuxing: "水", color: "green", old_even: "odd" },
+            { id: 21, num: "21", wuxing: "土", color: "green", old_even: "odd" },
             { id: 22, num: "22", wuxing: "水", color: "green", old_even: "even" },
-            { id: 23, num: "23", wuxing: "木", color: "red", old_even: "odd" },
+            { id: 23, num: "23", wuxing: "水", color: "red", old_even: "odd" },
             { id: 24, num: "24", wuxing: "木", color: "red", old_even: "even" },
-            { id: 25, num: "25", wuxing: "金", color: "blue", old_even: "odd" },
+            { id: 25, num: "25", wuxing: "木", color: "blue", old_even: "odd" },
             { id: 26, num: "26", wuxing: "金", color: "blue", old_even: "even" },
-            { id: 27, num: "27", wuxing: "土", color: "green", old_even: "odd" },
+            { id: 27, num: "27", wuxing: "金", color: "green", old_even: "odd" },
             { id: 28, num: "28", wuxing: "土", color: "green", old_even: "even" },
-            { id: 29, num: "29", wuxing: "水", color: "red", old_even: "odd" },
+            { id: 29, num: "29", wuxing: "土", color: "red", old_even: "odd" },
             { id: 30, num: "30", wuxing: "水", color: "red", old_even: "odd" },
-            { id: 31, num: "31", wuxing: "火", color: "blue", old_even: "even" },
+            { id: 31, num: "31", wuxing: "水", color: "blue", old_even: "even" },
             { id: 32, num: "32", wuxing: "火", color: "green", old_even: "odd" },
-            { id: 33, num: "33", wuxing: "金", color: "green", old_even: "even" },
+            { id: 33, num: "33", wuxing: "火", color: "green", old_even: "even" },
             { id: 34, num: "34", wuxing: "金", color: "red", old_even: "odd" },
-            { id: 35, num: "35", wuxing: "土", color: "red", old_even: "even" },
+            { id: 35, num: "35", wuxing: "金", color: "red", old_even: "even" },
             { id: 36, num: "36", wuxing: "土", color: "blue", old_even: "odd" },
-            { id: 37, num: "37", wuxing: "木", color: "blue", old_even: "even" },
+            { id: 37, num: "37", wuxing: "土", color: "blue", old_even: "even" },
             { id: 38, num: "38", wuxing: "木", color: "green", old_even: "odd" },
-            { id: 39, num: "39", wuxing: "火", color: "green", old_even: "even" },
+            { id: 39, num: "39", wuxing: "木", color: "green", old_even: "even" },
             { id: 40, num: "40", wuxing: "火", color: "red", old_even: "even" },
-            { id: 41, num: "41", wuxing: "金", color: "blue", old_even: "odd" },
+            { id: 41, num: "41", wuxing: "火", color: "blue", old_even: "odd" },
             { id: 42, num: "42", wuxing: "金", color: "blue", old_even: "even" },
-            { id: 43, num: "43", wuxing: "水", color: "green", old_even: "odd" },
+            { id: 43, num: "43", wuxing: "金", color: "green", old_even: "odd" },
             { id: 44, num: "44", wuxing: "水", color: "green", old_even: "even" },
-            { id: 45, num: "45", wuxing: "木", color: "red", old_even: "odd" },
+            { id: 45, num: "45", wuxing: "水", color: "red", old_even: "odd" },
             { id: 46, num: "46", wuxing: "木", color: "red", old_even: "even" },
-            { id: 47, num: "47", wuxing: "火", color: "blue", old_even: "odd" },
+            { id: 47, num: "47", wuxing: "木", color: "blue", old_even: "odd" },
             { id: 48, num: "48", wuxing: "火", color: "blue", old_even: "even" },
-            { id: 49, num: "49", wuxing: "土", color: "green", old_even: "odd" }
+            { id: 49, num: "49", wuxing: "火", color: "green", old_even: "odd" }
         ];
     }
 
@@ -237,126 +237,41 @@ class Helper {
         return result ? result.wuxing : null;
     }
 
-    RULES = () => {
-        return {
-            // 大
-            DA: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
-            // 小
-            XIAO: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
-            // 单
-            DAN: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27],
-            // 双
-            SHUANG: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28],
-            // 合大
-            HEDA: [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
-            // 合小
-            HEXIAO: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-            // 合单
-            HEDAN: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23],
-            // 合双
-            HESHUANG: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22],
-            // 天肖
-            TIANXIAO: [1, 5, 9, 13, 17, 21],
-            // 地肖
-            DIXIAO: [2, 6, 10, 14, 18, 22],
-            // 前肖
-            QIANXIAO: [3, 7, 11, 15, 19, 23],
-            // 后肖
-            HOUXIAO: [4, 8, 12, 16, 20, 24],
-            // 家肖
-            JIAXIAO: [5, 9, 13, 17, 21, 25],
-            // 野肖
-            YEXIAO: [6, 10, 14, 18, 22, 26],
-            // 尾大
-            WEIDA: [5, 6, 7, 8, 9],
-            // 尾小
-            WEIXIAO: [0, 1, 2, 3, 4],
-            // 大单
-            DADAN: [1, 3, 5, 7, 9],
-            // 小单
-            XIAODAN: [15, 17, 19, 21, 23, 25, 27],
-            // 大双
-            DASHUANG: [2, 4, 6, 8, 10, 12, 14],
-            // 小双
-            XIAOSHUAANG: [16, 18, 20, 22, 24, 26, 28],
-            // 绿波
-            LV: [2, 3, 7, 8, 12, 13, 17, 18, 22, 23, 27, 28],
-            // 红波
-            HONG: [1, 6, 9, 14, 15, 20, 21, 26],
-            // 蓝波
-            LAN: [4, 5, 10, 11, 16, 19, 24, 25],
-            // 红单
-            HONG_DAN: [1, 9, 15, 21],
-            // 蓝单
-            LAN_DAN: [5, 19],
-            // 绿单
-            LV_DAN: [3, 7, 13, 17, 23],
-            // 红双
-            HONG_SHUANG: [6, 14, 20, 26],
-            // 蓝双
-            LAN_SHUANG: [4, 10, 16, 24],
-            // 绿双
-            LV_SHUANG: [2, 8, 12, 18, 22, 28],
-            // 红大
-            HONG_DA: [6, 9, 14, 15, 20, 21, 26],
-            // 蓝大
-            LAN_DA: [4, 5, 10, 11, 16, 19, 24, 25],
-            // 绿大
-            LV_DA: [2, 3, 7, 8, 12, 13, 17, 18, 22, 23, 27, 28],
-            // 红小
-            HONG_XIAO: [1, 6, 9, 15, 21],
-            // 蓝小
-            LAN_XIAO: [4, 5, 10, 11, 16, 19, 24, 25],
-            // 绿小
-            LV_XIAO: [2, 3, 7, 8, 12, 13, 17, 18, 22, 23, 27, 28],
-            // 红大单
-            HONG_DA_DAN: [9, 15, 21],
-            // 蓝大单
-            LAN_DA_DAN: [5, 19],
-            // 绿大单
-            LV_DA_DAN: [3, 7, 13, 17, 23],
-            // 红大双
-            HONG_DA_SHUANG: [6, 14, 20, 26],
-            // 蓝大双
-            LAN_DA_SHUANG: [4, 10, 16, 24],
-            // 绿大双
-            LV_DA_SHUANG: [2, 8, 12, 18, 22, 28],
-            // 红小单
-            HONG_XIAO_DAN: [1, 9, 15, 21],
-            // 蓝小单
-            LAN_XIAO_DAN: [5, 19],
-            // 绿小单
-            LV_XIAO_DAN: [3, 7, 13, 17, 23],
-            // 红小双
-            HONG_XIAO_SHUANG: [6, 14, 20, 26],
-            // 蓝小双
-            LAN_XIAO_SHUANG: [4, 10, 16, 24],
-            // 绿小双
-            LV_XIAO_SHUANG: [2, 8, 12, 18, 22, 28],
-            // 0头 | 1头 | 2头 | 3头 | 4头
-            "0TOU": [1,2,3,4,5,6,7,8,9],
-            "1TOU": [10,11,12,13,14,15,16,17,18,19],
-            "2TOU": [20,21,22,23,24,25,26,27,28,29],
-            "3TOU": [30,31,32,33,34,35,36,37,38,39],
-            "4TOU": [40,41,42,43,44,45,46,47,48,49],
-            // 0尾 | 1尾 | 2尾 | 3尾 | 4尾 | 5尾 | 6尾 | 7尾 | 8尾 | 9尾
-            "0WEI": [10, 20, 30, 40],
-            "1WEI": [1, 11, 21, 31, 41],
-            "2WEI": [2, 12, 22, 32, 42],
-            "3WEI": [3, 13, 23, 33, 43],
-            "4WEI": [4, 14, 24, 34, 44],
-            "5WEI": [5, 15, 25, 35, 45],
-            "6WEI": [6, 16, 26, 36, 46],
-            "7WEI": [7, 17, 27, 37, 47],
-            "8WEI": [8, 18, 28, 38, 48],
-            "9WEI": [9, 19, 29, 39, 49],
-            // 金 | 木 | 水 | 火 | 土
-            JIN: [3, 4, 11, 12, 25, 26, 33, 34, 41, 42],
-            MU: [7, 8, 13, 14, 17, 18, 23, 24, 27, 28],
-            SHUI: [2, 3, 6, 7, 8, 12, 13, 17, 18, 22, 23, 27, 28],
-            HUO: [1, 6, 9, 10, 15, 16, 19, 20, 21, 26, 29, 30, 33, 34, 37, 38, 39, 40],
-            TU: [5, 6, 11, 12, 25, 26, 35, 36, 45, 46, 49],
+    orderedZodiac() {
+        let data = {};
+
+        const zodiac = this.zodiac();
+        const years = this.yearZodiac();
+        const comparisons = this.comparisons();
+        const numbers = this.zodiacNumbers();
+
+        const currentDate = new Date();
+        const yearData = years.find(y => {
+            const fromDate = new Date(y.from_date);
+            const toDate = new Date(y.to_date);
+            return currentDate >= fromDate && currentDate <= toDate;
+        });
+        const animal = yearData.animal;
+
+        const currentZodiac = zodiac.find(z => z.key == animal);
+        const arr = this.zodiacOrder(currentZodiac.id);
+        for (let i = 0; i < arr.length; i++) {
+            const zodiacId = arr[i];
+            const z = zodiac.find(z => z.id == zodiacId);
+            const comparison = comparisons.find(c => c.id == i + 1);
+            
+            comparison.numbers.forEach(num => {
+                const index = numbers.findIndex(n => n.id === num);
+                if (index !== -1) {
+                    if (!data[z.code]) {
+                        data[z.code] = [];
+                    }
+                    data[z.code].push(numbers[index].id);
+                }
+            });
         }
+
+        return data;
     }
 }
 

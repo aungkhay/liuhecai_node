@@ -37,6 +37,19 @@ Bet.init({
         },
         defaultValue: null
     },
+    batch_number: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    is_group_bet: {
+        type: DataTypes.TINYINT,
+        allowNull: false,
+        defaultValue: 0
+    },
+    group_name: {
+        type: DataTypes.TEXT('medium'),
+        allowNull: true,
+    },
     item_code: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -80,6 +93,9 @@ Bet.init({
     tableName: 'bets',
     indexes: [
         { fields: ['remark'] },
+        { fields: ['item_code'] },
+        { fields: ['is_group_bet'] },
+        { fields: ['is_calculated'] }
     ]
 })
 

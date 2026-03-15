@@ -1,6 +1,6 @@
 const MyResponse = require('../../helpers/MyResponse');
 const CommonHelper = require('../../helpers/CommonHelper');
-const { BetCategory, BetSubCategory, BetItem, Bet, db, BetNumber } = require('../../models');
+const { BetCategory, BetSubCategory, BetItem, Bet, PlatformRecord } = require('../../models');
 let { validationResult } = require('express-validator');
 const { Op, fn, col } = require('sequelize');
 
@@ -52,32 +52,7 @@ class Controller {
             }
             const bets = req.body.bets;
 
-            const t = await db.transaction();
-            try {
-                for (const bet of bets) {
-                    const betItem = await Bet.create({
-                        category_id: bet.category_id,
-                        sub_category_id: bet.sub_category_id,
-                        item_code: bet.item_code,
-                        item_name: bet.item_name,
-                        odds: bet.odds,
-                        bet_amount: bet.bet_amount,
-                    }, { transaction: t });
-                    const numbers = [];
-                    for (const num of bet.numbers) {
-                        numbers.push({
-                            bet_id: betItem.id,
-                            code: num.code,
-                            number: num.number,
-                        });
-                    }
-                    await BetNumber.bulkCreate(numbers, { transaction: t });
-                }
-                await t.commit();
-            } catch (error) {
-                await t.rollback();
-                return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
-            }
+            await Bet.bulkCreate(bets);
 
             return MyResponse(res, this.ResCode.SUCCESS.code, true, this.ResCode.SUCCESS.msg, {});
         } catch (error) {
@@ -96,6 +71,7 @@ class Controller {
             const remark = req.query.remark || null;
             const fromDate = req.query.fromDate || null;
             const toDate = req.query.toDate || null;
+            const batch_number = req.query.batch_number || null;
 
             const whereConditions = {};
             if (category_id) {
@@ -109,6 +85,9 @@ class Controller {
             }
             if (fromDate && toDate) {
                 whereConditions.createdAt = { [Op.between]: [new Date(fromDate), new Date(toDate)] };
+            }
+            if (batch_number) {
+                whereConditions.batch_number = batch_number;
             }
 
             const { count, rows } = await Bet.findAndCountAll({
@@ -125,7 +104,7 @@ class Controller {
                         attributes: ['id', 'name'],
                     }
                 ],
-                attributes: ['id', 'item_code', 'item_name', 'odds', 'bet_amount', 'remark', 'createdAt'],
+                attributes: ['id', 'item_code', 'item_name', 'odds', 'bet_amount', 'remark', 'is_calculated', 'createdAt'],
                 offset: offset,
                 limit: perPage,
                 order: [['id', 'DESC']],
