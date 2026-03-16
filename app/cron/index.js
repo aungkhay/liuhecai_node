@@ -1,11 +1,15 @@
 let cron = require('node-cron');
 const axios = require('axios');
 const ZodiacHelper = require('../helpers/ZodiacHelper');
+const RedisHelper = require('../helpers/RedisHelper');
+const BetCalculator = require('../helpers/BetCalculator');
 const { HongKongRecord, AomenRecord, PlatformRecord, BetCategory } = require('../models');
 const moment = require('moment');
 
 class Cron {
-    constructor() {
+    constructor(app) {
+        this.redisHelper = new RedisHelper(app);
+        this.betCalculator = new BetCalculator();
         this.zodiacYears = [
             { animal: "rat", from_date: "2020-01-25", to_date: "2021-02-11" },
             { animal: "ox", from_date: "2021-02-12", to_date: "2022-01-31" },
@@ -155,14 +159,44 @@ class Cron {
 
     CALCULATE_BET = async () => {
         try {
-            // 正码1+正码2+正码3+正码4+正码5+正码6  +   特码
-            const result = await PlatformRecord.findOne({ order: [['draw_date', 'DESC']] });
 
-            const categories = await BetCategory.findAll({ where: { is_active: 1 } });
-            for (let i = 0; i < categories.length; i++) {
-                const category = categories[i];
-                await this[`CALCULATE_CATEGORY_BET_${category.id}`](category, result);
+            const record = await this.redisHelper.getValue(`CALCULATE_BET_RESULTS`);
+            if (!record) {
+                console.log('No record found in Redis for CALCULATE_BET_RESULTS');
+                return;
             }
+            const recordObj = JSON.parse(record);
+            // if (recordObj.status === 1) {
+            //     console.log('Bets are in the calculating process, please wait...');
+            //     return;
+            // }
+
+            // 正码1+正码2+正码3+正码4+正码5+正码6  +   特码
+            const result = await PlatformRecord.findOne({
+                where: { id: recordObj.id }, 
+                order: [['draw_date', 'DESC']] 
+            });
+            if (!result) {
+                console.log('No platform record found for bet calculation');
+                return;
+            }
+            if (result.calculate_status === 2) {
+                console.log('Bet calculation already completed for this record');
+                await this.redisHelper.deleteKey(`CALCULATE_BET_RESULTS`);
+                return;
+            }
+            // if (result.calculate_status === 1) {
+            //     console.log('Bet calculation already in process for this record');
+            //     return;
+            // }
+            await this.redisHelper.setValue(`CALCULATE_BET_RESULTS`, JSON.stringify({ id: recordObj.id, status: 1 }));
+
+            await this.betCalculator.RUN(result);
+
+            // await this.redisHelper.deleteKey(`CALCULATE_BET_RESULTS`);
+
+            console.log('Bet calculation completed successfully');
+            
         } catch (error) {
             console.log(error);
         }

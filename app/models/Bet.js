@@ -78,9 +78,9 @@ Bet.init({
         defaultValue: 0
     },
     is_win: {
-        type: DataTypes.TINYINT,
-        allowNull: false,
-        defaultValue: 0
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        comment: '0: 未结算, 1: 输, 2: 赢, 3: 和'
     },
     win_amount: {
         type: DataTypes.DECIMAL(10, 2),

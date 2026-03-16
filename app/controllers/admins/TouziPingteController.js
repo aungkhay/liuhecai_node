@@ -20,7 +20,7 @@ class Controller {
             const year = now.getFullYear();
             let current_year = year;
 
-            let last_batch_number = `${current_year % 100}001`;
+            let last_batch_number = `${current_year % 100}000`;
             if (!range) {
                 const record = await PlatformRecord.findOne({
                     order: [['id', 'DESC']],
@@ -31,7 +31,7 @@ class Controller {
                     if (recordYear === current_year % 100) {
                         last_batch_number = Number(record.batch_number);
                     } else {
-                        last_batch_number = `${current_year % 100}001`;
+                        last_batch_number = `${current_year % 100}000`;
                     }
                 }
             } else {
@@ -40,7 +40,7 @@ class Controller {
                 if (rangeYear === current_year % 100) {
                     last_batch_number = Number(range.batch_end);
                 } else {
-                    last_batch_number = `${current_year % 100}001`;
+                    last_batch_number = `${current_year % 100}000`;
                 }
             }
             const data = {

@@ -3,17 +3,16 @@ const { AomenRecord, HongKongRecord, PlatformRecord, db, ResultGuess, TouZiPingT
 const CommonHelper = require('../../helpers/CommonHelper');
 const ZodiacHelper = require('../../helpers/ZodiacHelper');
 const BetRuleHelper = require('../../helpers/BetRuleHelper');
+const RedisHelper = require('../../helpers/RedisHelper');
 let { validationResult } = require('express-validator');
 const { Op, literal, Sequelize  } = require('sequelize');
 
 class Controller {
     constructor (app) {
+        this.redisHelper = new RedisHelper(app);
         this.commonHelper = new CommonHelper();
         this.zodiacHelper = new ZodiacHelper();
-        this.orderedZodiacs = this.zodiacHelper.orderedZodiac();
-        this.betRuleHelper = new BetRuleHelper({
-            orderedZodiacs: this.zodiacHelper.orderedZodiac()
-        });
+        this.betRuleHelper = new BetRuleHelper();
         this.ResCode = this.commonHelper.ResCode;
         this.getOffset = this.commonHelper.getOffset;
     }
@@ -29,14 +28,14 @@ class Controller {
             const now = new Date();
             const year = now.getFullYear();
             let current_year = year;
-            let last_batch_number = `${current_year % 100}001`;
+            let last_batch_number = `${current_year % 100}000`;
             if (record) {
                 // Check if the last record's batch number is from the current year
                 const recordYear = Math.floor(Number(record.batch_number) / 1000);
                 if (recordYear === current_year % 100) {
                     last_batch_number = Number(record.batch_number);
                 } else {
-                    last_batch_number = `${current_year % 100}001`;
+                    last_batch_number = `${current_year % 100}000`;
                 }
             }
 
@@ -324,6 +323,32 @@ class Controller {
             }
 
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '检查完成', { total_bet_amount: totalBetAmount || 0 });
+        } catch (error) {
+            console.error(error);
+            return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+        }
+    }
+
+    CALCULATE_BET_RESULTS = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const record = await PlatformRecord.findByPk(id);
+            if (!record) {
+                return MyResponse(res, this.ResCode.NOT_FOUND.code, false, '记录未找到', {});
+            }
+
+            if (record.calculate_status === 1) {
+                return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '记录正在计算中，请稍后再试', {});
+            }
+
+            if (record.calculate_status === 2) {
+                return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '记录已计算完成', {});
+            }
+
+            await record.update({ calculate_status: 1 });
+            await this.redisHelper.setValue(`CALCULATE_BET_RESULTS`, JSON.stringify({ id: record.id, status: 0 }));
+
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, '计算已开始，请稍后查看结果', {});
         } catch (error) {
             console.error(error);
             return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});

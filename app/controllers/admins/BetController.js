@@ -123,7 +123,7 @@ class Controller {
                         attributes: ['id', 'name'],
                     }
                 ],
-                attributes: ['id', 'item_code', 'item_name', 'odds', 'bet_amount', 'remark', 'is_calculated', 'createdAt'],
+                attributes: ['id', 'batch_number', 'item_code', 'item_name', 'odds', 'bet_amount', 'is_win', 'win_amount', 'remark', 'is_calculated', 'createdAt'],
                 offset: offset,
                 limit: perPage,
                 order: [['id', 'DESC']],

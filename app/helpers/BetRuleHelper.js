@@ -1,14 +1,16 @@
 const { Bet } = require("../models");
+const ZodiacHelper = require("./ZodiacHelper");
 
 class BetRuleHelper {
-    constructor(params) {
+    constructor() {
+        this.zodiacHelper = new ZodiacHelper();
         this.numbers = Array.from({ length: 49 }, (_, i) => i + 1);
         this.isBig = (num) => num >= 25;
         this.isSmall = (num) => num <= 24;
         this.isOdd = (num) => num % 2 === 1;
         this.isEven = (num) => num % 2 === 0;
         this.sumDigits = (n) => n.toString().split('').reduce((a, b) => a + Number(b), 0);
-        this.orderedZodiac = params.orderedZodiacs;
+        this.orderedZodiac = this.zodiacHelper.orderedZodiac();
         this.RED = [1,2,7,8,12,13,18,19,23,24,29,30,34,35,40,45,46];
         this.BLUE = [3,4,9,10,14,15,20,25,26,31,36,37,41,42,47,48];
         this.GREEN = [5,6,11,16,17,21,22,27,28,32,33,38,39,43,44,49];
@@ -111,24 +113,22 @@ class BetRuleHelper {
         try {
             const codes = [];
             // 特码-双面 TM_SM
-            if (num7 != 49) {
-                if (this.isBig(num7)) codes.push('TM_SM_DA');
-                if (this.isSmall(num7)) codes.push('TM_SM_XIAO');
-                if (this.isOdd(num7)) codes.push('TM_SM_DAN');
-                if (this.isEven(num7)) codes.push('TM_SM_SHUANG');
-                if (this.TM_SM_HEDA().includes(num7)) codes.push('TM_SM_HEDA');
-                if (this.TM_SM_HEXIAO().includes(num7)) codes.push('TM_SM_HEXIAO');
-                if (this.TM_SM_HEDAN().includes(num7)) codes.push('TM_SM_HEDAN');
-                if (this.TM_SM_HESHUANG().includes(num7)) codes.push('TM_SM_HESHUANG');
-                if (this.TM_SM_WEIDA().includes(num7)) codes.push('TM_SM_WEIDA');
-                if (this.TM_SM_WEIXIAO().includes(num7)) codes.push('TM_SM_WEIXIAO');
-                if (this.TM_SM_TIANXIAO().includes(num7)) codes.push('TM_SM_TIANXIAO');
-                if (this.TM_SM_DIXIAO().includes(num7)) codes.push('TM_SM_DIXIAO');
-                if (this.TM_SM_QIANXIAO().includes(num7)) codes.push('TM_SM_QIANXIAO');
-                if (this.TM_SM_HOUXIAO().includes(num7)) codes.push('TM_SM_HOUXIAO');
-                if (this.TM_SM_JIAXIAO().includes(num7)) codes.push('TM_SM_JIAXIAO');
-                if (this.TM_SM_YEXIAO().includes(num7)) codes.push('TM_SM_YEXIAO');
-            }
+            if (this.isBig(num7)) codes.push('TM_SM_DA');
+            if (this.isSmall(num7)) codes.push('TM_SM_XIAO');
+            if (this.isOdd(num7)) codes.push('TM_SM_DAN');
+            if (this.isEven(num7)) codes.push('TM_SM_SHUANG');
+            if (this.TM_SM_HEDA().includes(num7)) codes.push('TM_SM_HEDA');
+            if (this.TM_SM_HEXIAO().includes(num7)) codes.push('TM_SM_HEXIAO');
+            if (this.TM_SM_HEDAN().includes(num7)) codes.push('TM_SM_HEDAN');
+            if (this.TM_SM_HESHUANG().includes(num7)) codes.push('TM_SM_HESHUANG');
+            if (this.TM_SM_WEIDA().includes(num7)) codes.push('TM_SM_WEIDA');
+            if (this.TM_SM_WEIXIAO().includes(num7)) codes.push('TM_SM_WEIXIAO');
+            if (this.TM_SM_TIANXIAO().includes(num7)) codes.push('TM_SM_TIANXIAO');
+            if (this.TM_SM_DIXIAO().includes(num7)) codes.push('TM_SM_DIXIAO');
+            if (this.TM_SM_QIANXIAO().includes(num7)) codes.push('TM_SM_QIANXIAO');
+            if (this.TM_SM_HOUXIAO().includes(num7)) codes.push('TM_SM_HOUXIAO');
+            if (this.TM_SM_JIAXIAO().includes(num7)) codes.push('TM_SM_JIAXIAO');
+            if (this.TM_SM_YEXIAO().includes(num7)) codes.push('TM_SM_YEXIAO');
             if (this.TM_SM_DADAN().includes(num7)) codes.push('TM_SM_DADAN');
             if (this.TM_SM_DASHUANG().includes(num7)) codes.push('TM_SM_DASHUANG');
             if (this.TM_SM_XIAODAN().includes(num7)) codes.push('TM_SM_XIAODAN');
@@ -186,27 +186,25 @@ class BetRuleHelper {
             }
 
             // 特码-合肖 TM_HX
-            if (num7 != 49) {
-                const TM_HX = this.addRulePrefix('TM_HX');
-                const TM_HX_Group = await Bet.findAll({
-                    where: {
-                        is_group_bet: 1,
-                        group_name: 'TM_HX',
-                    },
-                    attributes: ['item_code'],
-                });
-                if (TM_HX_Group.length) {
-                    for (const group of TM_HX_Group) {
-                        const item_code = group.item_code.split(','); // e.g. TM_HX_SHU,TM_HX_HOU
-                        const mergedNums = [];
-                        for (const code of item_code) {
-                            if (!Object.hasOwn(TM_HX, code)) continue;
-                            const nums = TM_HX[code];
-                            mergedNums.push(...nums);
-                        }
-                        if (mergedNums.includes(num7)) {
-                            codes.push(group.item_code);
-                        }
+            const TM_HX = this.addRulePrefix('TM_HX');
+            const TM_HX_Group = await Bet.findAll({
+                where: {
+                    is_group_bet: 1,
+                    group_name: 'TM_HX',
+                },
+                attributes: ['item_code'],
+            });
+            if (TM_HX_Group.length) {
+                for (const group of TM_HX_Group) {
+                    const item_code = group.item_code.split(','); // e.g. TM_HX_SHU,TM_HX_HOU
+                    const mergedNums = [];
+                    for (const code of item_code) {
+                        if (!Object.hasOwn(TM_HX, code)) continue;
+                        const nums = TM_HX[code];
+                        mergedNums.push(...nums);
+                    }
+                    if (mergedNums.includes(num7)) {
+                        codes.push(group.item_code);
                     }
                 }
             }
