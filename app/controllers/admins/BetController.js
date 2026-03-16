@@ -50,9 +50,28 @@ class Controller {
             if (!err.isEmpty()) {
                 return MyResponse(res, this.ResCode.VALIDATE_FAIL.code, false, this.ResCode.VALIDATE_FAIL.msg, {}, errors);
             }
+            
+            let batch_number = null;
+            const lastRecord = await PlatformRecord.findOne({
+                attributes: ['batch_number'],
+                order: [['id', 'DESC']],
+            });
+            if (lastRecord) {
+                batch_number = lastRecord.batch_number;
+            } else {
+                const now = new Date();
+                const year = now.getFullYear();
+                batch_number = `${year % 100}001`;
+            }
+
             const bets = req.body.bets;
 
-            await Bet.bulkCreate(bets);
+            const newBets = bets.map(bet => ({
+                ...bet,
+                batch_number: batch_number,
+            }));
+
+            await Bet.bulkCreate(newBets);
 
             return MyResponse(res, this.ResCode.SUCCESS.code, true, this.ResCode.SUCCESS.msg, {});
         } catch (error) {
