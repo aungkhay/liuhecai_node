@@ -245,13 +245,12 @@ class BetRuleHelper {
             const HEDAN = this.numbers.filter(n => this.sumDigits(n) % 2 === 1);
             const HESHUANG = this.numbers.filter(n => this.sumDigits(n) % 2 === 0);
             const HEDA = this.numbers.filter(n => this.sumDigits(n) >= 7);
-            const HEXIAO = this.numbers.filter(n => this.isSmall(n));
-            const WEIDA = this.numbers.filter(n => this.isBig(n));
-            const WEIXIAO = this.numbers.filter(n => this.isSmall(n));
+            const HEXIAO = this.numbers.filter(n => this.sumDigits(n) <= 6);
+            const WEIDA = this.numbers.filter(n => n % 10 >= 5);
+            const WEIXIAO = this.numbers.filter(n => n % 10 <= 4);
 
             for (let i = 1; i <= 6; i++) {
                 const num = zmNums[i - 1];
-                if (num === 49) continue;
                 if (DAN.includes(num)) codes.push(`ZM_ZM16_${i}_DAN`);
                 if (SHUANG.includes(num)) codes.push(`ZM_ZM16_${i}_SHUANG`);
                 if (DA.includes(num)) codes.push(`ZM_ZM16_${i}_DA`);
@@ -272,7 +271,6 @@ class BetRuleHelper {
             const ZM_ZXQSB = this.addRulePrefix('ZM_ZXQSB');
             for (let i = 0; i < uniqueNums.length; i++) {
                 const num = uniqueNums[i];
-                if (num === 49) continue;
                 if (this.RED.includes(num)) codes.push(`ZM_ZXQSB_HONG`);
                 if (this.BLUE.includes(num)) codes.push(`ZM_ZXQSB_LAN`);
                 if (this.GREEN.includes(num)) codes.push(`ZM_ZXQSB_LV`);
@@ -315,7 +313,7 @@ class BetRuleHelper {
         }
     }
 
-    LXLW_ITEM_CODES = async (zmNums) => {
+    LXLW_ITEM_CODES = async (allNums) => {
         try {
             const codes = [];
 
@@ -338,14 +336,14 @@ class BetRuleHelper {
                                 mergedLXNums.push(...nums);
                             }
                         }
-                        if (zmNums.some(n => mergedLXNums.includes(n))) {
+                        if (allNums.some(n => mergedLXNums.includes(n))) {
                             codes.push(group.item_code);
                             break;
                         }
                         const lwObj = {};
                         for (let j = 0; j <= 9; j++) {
                             lwObj[`LXLW_${i}LW_${j}`] = this.numbers.filter(n => n % 10 === j);
-                            if (zmNums.some(n => lwObj[`LXLW_${i}LW_${j}`].includes(n))) {
+                            if (allNums.some(n => lwObj[`LXLW_${i}LW_${j}`].includes(n))) {
                                 codes.push(group.item_code);
                                 break;
                             }

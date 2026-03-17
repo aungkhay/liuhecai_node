@@ -282,7 +282,7 @@ class Controller {
             const TM_ItemCodes = await this.betRuleHelper.TM_ITEM_CODES(num7);
             const ZM_ITEM_CODES = this.betRuleHelper.ZM_ITEM_CODES(zmNums);
             const ZMT_ItemCodes = this.betRuleHelper.ZMT_ITEM_CODES(zmNums);
-            const LXLW_ItemCodes = await this.betRuleHelper.LXLW_ITEM_CODES(zmNums);
+            const LXLW_ItemCodes = await this.betRuleHelper.LXLW_ITEM_CODES(allNums);
             const LM_ItemCodes = await this.betRuleHelper.LM_ITEM_CODES(allNums, num7);
             const YXZXPTWS_ItemCodes = this.betRuleHelper.YXZXPTWS_ITEM_CODES(allNums);
             const ZH_ITEM_CODES = this.betRuleHelper.ZH_ITEM_CODES(allNums);

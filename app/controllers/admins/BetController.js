@@ -91,6 +91,8 @@ class Controller {
             const fromDate = req.query.fromDate || null;
             const toDate = req.query.toDate || null;
             const batch_number = req.query.batch_number || null;
+            const is_win = req.query.is_win || null; // 0: 未结算, 1: 输, 2: 赢, 3: 和
+            const is_calculated = req.query.is_calculated || null; // 0: 未结算, 1: 已结算
 
             const whereConditions = {};
             if (category_id) {
@@ -107,6 +109,12 @@ class Controller {
             }
             if (batch_number) {
                 whereConditions.batch_number = batch_number;
+            }
+            if (is_win !== null) {
+                whereConditions.is_win = is_win;
+            }
+            if (is_calculated !== null) {
+                whereConditions.is_calculated = is_calculated;
             }
 
             const { count, rows } = await Bet.findAndCountAll({
