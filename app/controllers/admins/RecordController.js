@@ -274,7 +274,23 @@ class Controller {
 
     CHECK_NUMBER_IN_BETS = async (req, res) => {
         try {
-            const { num1, num2, num3, num4, num5, num6, num7 } = req.body;
+            const err = validationResult(req);
+            const errors = this.commonHelper.validateForm(err);
+            if (!err.isEmpty()) {
+                return MyResponse(res, this.ResCode.VALIDATE_FAIL.code, false, this.ResCode.VALIDATE_FAIL.msg, {}, errors);
+            }
+
+            const { num1, num2, num3, num4, num5, num6, num7, batch_number } = req.body;
+
+            const betExists = await Bet.findOne({
+                where: {
+                    batch_number: batch_number,
+                    is_calculated: 0
+                }
+            });
+            if (!betExists) {
+                return MyResponse(res, this.ResCode.SUCCESS.code, true, '检查完成', { total_bet_amount: 0 });
+            }
 
             const allNums = [num1, num2, num3, num4, num5, num6, num7];
             const zmNums = [num1, num2, num3, num4, num5, num6];

@@ -111,3 +111,16 @@ exports.create_reference_link = () => {
         check('url').not().isEmpty().withMessage('链接URL不能为空')
     ]
 }
+
+exports.check_number_in_bets = () => {
+    return [
+        check('num1').not().isEmpty().withMessage('正码1不能为空'),
+        check('num2').not().isEmpty().withMessage('正码2不能为空'),
+        check('num3').not().isEmpty().withMessage('正码3不能为空'),
+        check('num4').not().isEmpty().withMessage('正码4不能为空'),
+        check('num5').not().isEmpty().withMessage('正码5不能为空'),
+        check('num6').not().isEmpty().withMessage('正码6不能为空'),
+        check('num7').not().isEmpty().withMessage('特码不能为空'),
+        check('batch_number').not().isEmpty().withMessage('期号不能为空')
+    ]
+}

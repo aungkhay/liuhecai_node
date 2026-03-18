@@ -1,6 +1,6 @@
 const { errLogger } = require("./Logger");
 const BetRuleHelper = require("./BetRuleHelper");
-const { Bet, db, BetSubCategory } = require("../models");
+const { Bet, db, BetSubCategory, PlatformRecord } = require("../models");
 
 class BetCalculator {
     constructor () {
@@ -775,6 +775,7 @@ class BetCalculator {
             for (const bet of bets) {
                 this[`CALCULATE_CATEGORY_${bet.category_id}`] && await this[`CALCULATE_CATEGORY_${bet.category_id}`](record);
             }
+            await PlatformRecord.update({ calculate_status: 2 }, { where: { id: record.id } });
         } catch (error) {
             console.log('BetCalculator RUN error:', error);
         }
