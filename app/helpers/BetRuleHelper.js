@@ -784,7 +784,7 @@ class BetRuleHelper {
         }
     }
 
-    CATEGORY_WIN_2 = async (zmNums) => {
+    CATEGORY_WIN_2 = async (zmNums, num7) => {
         try {
 
             const winRecords = [];
@@ -876,7 +876,7 @@ class BetRuleHelper {
                         }
 
                         // 特码颜色（=1.5分）
-                        const tmColor = getColor(record.num7);
+                        const tmColor = getColor(num7);
 
                         const score = { ...zmCount };
                         if (tmColor) score[tmColor] += 1.5;
@@ -1016,7 +1016,7 @@ class BetRuleHelper {
         }
     }
 
-    CATEGORY_WIN_5 = async (allNums, zmNums) => {
+    CATEGORY_WIN_5 = async (allNums, zmNums, num7) => {
         try {
             const winRecords = [];
             const bets = await Bet.findAll({
@@ -1061,7 +1061,7 @@ class BetRuleHelper {
 
                     if (matchCount === 2) {
                         const inZm = nums.filter(n => zmNums.includes(n)).length;
-                        const inTm = nums.includes(record.num7) ? 1 : 0;
+                        const inTm = nums.includes(num7);
                         if (inZm === 2) {
                             bet.odds = subCate.odds.Z2; // 中二赔率
                             winRecords.push(bet);
@@ -1078,7 +1078,7 @@ class BetRuleHelper {
                     const codes = bet.item_code.split(',').map(code => code.trim()); // 例如：LM_TC_8,LM_TC_17
                     const nums = codes.map(code => parseInt(code.replace('LM_TC_', ''))); // [8, 17]
                     const matchCount = nums.filter(n => allNums.includes(n)).length;
-                    const inTm = nums.includes(record.num7);
+                    const inTm = nums.includes(num7);
                     const inZm = nums.some(n => zmNums.includes(n));
                     if (matchCount === 2 && inTm && inZm) {
                         winRecords.push(bet);

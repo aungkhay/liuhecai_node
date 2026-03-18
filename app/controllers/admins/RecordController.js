@@ -286,10 +286,10 @@ class Controller {
 
             let totalWinAmount = 0;
             totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_1(num7);
-            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_2(zmNums);
+            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_2(zmNums, num7);
             totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_3(zmNums);
             totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_4(allNums);
-            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_5(allNums, num7);
+            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_5(allNums, zmNums, num7);
             totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_6(allNums);
             totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_7(allNums);
             totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_8(allNums);
