@@ -43,7 +43,6 @@ APP.use('/admin', new AdminRoute(APP));
 const Cron = require('./app/cron');
 const cron = new Cron(APP);
 cron.START();
-cron.CALCULATE_BET();
 // cron.GET_HK_HISTORY();
 // cron.GET_NEW_AM_HISTORY();
 

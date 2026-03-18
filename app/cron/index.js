@@ -30,6 +30,8 @@ class Cron {
 
         cron.schedule('40 21 * * *', () => this.GET_NEW_AM_HISTORY()).start();
         cron.schedule('45 21 * * *', () => this.GET_HK_HISTORY(1)).start();
+        // Run every minute
+        cron.schedule('* * * * *', () => this.CALCULATE_BET()).start();
 
     }
 
@@ -147,16 +149,6 @@ class Cron {
         }
     }
 
-    CALCULATE_CATEGORY_BET_1 = async (category, result) => {}
-    CALCULATE_CATEGORY_BET_2 = async (category, result) => {}
-    CALCULATE_CATEGORY_BET_3 = async (category, result) => {}
-    CALCULATE_CATEGORY_BET_4 = async (category, result) => {}
-    CALCULATE_CATEGORY_BET_5 = async (category, result) => {}
-    CALCULATE_CATEGORY_BET_6 = async (category, result) => {}
-    CALCULATE_CATEGORY_BET_7 = async (category, result) => {}
-    CALCULATE_CATEGORY_BET_8 = async (category, result) => {}
-    CALCULATE_CATEGORY_BET_9 = async (category, result) => {}
-
     CALCULATE_BET = async () => {
         try {
 
@@ -166,10 +158,10 @@ class Cron {
                 return;
             }
             const recordObj = JSON.parse(record);
-            // if (recordObj.status === 1) {
-            //     console.log('Bets are in the calculating process, please wait...');
-            //     return;
-            // }
+            if (recordObj.status === 1) {
+                console.log('Bets are in the calculating process, please wait...');
+                return;
+            }
 
             // 正码1+正码2+正码3+正码4+正码5+正码6  +   特码
             const result = await PlatformRecord.findOne({
@@ -185,20 +177,21 @@ class Cron {
                 await this.redisHelper.deleteKey(`CALCULATE_BET_RESULTS`);
                 return;
             }
-            // if (result.calculate_status === 1) {
-            //     console.log('Bet calculation already in process for this record');
-            //     return;
-            // }
+            if (result.calculate_status === 1) {
+                console.log('Bet calculation already in process for this record');
+                return;
+            }
             await this.redisHelper.setValue(`CALCULATE_BET_RESULTS`, JSON.stringify({ id: recordObj.id, status: 1 }));
 
             await this.betCalculator.RUN(result);
 
-            // await this.redisHelper.deleteKey(`CALCULATE_BET_RESULTS`);
+            await this.redisHelper.deleteKey(`CALCULATE_BET_RESULTS`);
 
             console.log('Bet calculation completed successfully');
             
         } catch (error) {
             console.log(error);
+            await this.redisHelper.deleteKey(`CALCULATE_BET_RESULTS`);
         }
     }
 }

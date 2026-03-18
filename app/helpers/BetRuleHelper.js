@@ -592,7 +592,6 @@ class BetRuleHelper {
             const sum = allNums.reduce((acc, n) => acc + n, 0);
             if (sum >= 176) codes.push('ZH_DA');
             if (sum <= 174) codes.push('ZH_XIAO');
-            if (sum === 175) codes.push('ZH_HE');
             // 总和大小不含和：7个开奖号码之和≥175为“大”，≤174为“小”，无和值。
             if (sum >= 175) codes.push('ZH_DA_WH');
             if (sum <= 174) codes.push('ZH_XIAO_WH');

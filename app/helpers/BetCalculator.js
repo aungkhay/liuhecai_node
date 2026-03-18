@@ -528,22 +528,241 @@ class BetCalculator {
 
     CALCULATE_CATEGORY_6 = async (record) => {
         try {
+            const allNums = [record.num1, record.num2, record.num3, record.num4, record.num5, record.num6, record.num7];
             const winRecords = [];
 
             const bets = await Bet.findAll({
                 where: { is_calculated: false, category_id: 6 },
             });
             for (const bet of bets) {
+
                 // 正特一肖：选择1个生肖组成1注，开奖的7个号码所对应的生肖包含这个生肖（顺序不限），即中奖。不论同生肖的号码出现次数，只中一次奖。
+                if (bet.item_code.startsWith('YXZXPTWS_YX_')) {
+                    const zodiacs = this.betRuleHelper.addRulePrefix('YXZXPTWS_YX'); // { SHU: [...], HOU: [...], ... }
+                    const nums = zodiacs[bet.item_code];
+
+                    if (nums && allNums.some(n => nums.includes(n))) {
+                        winRecords.push(bet);
+                    }
+                }
+
+                // 正特尾数：选择1个尾数，开奖的7个号码中的尾数包含所选尾数，即中奖。不论相同尾数出现的次数，只中一次奖。
+                if (bet.item_code.startsWith('YXZXPTWS_WS_')) {
+                    for (let i = 0; i <= 9; i++) {
+                        if (bet.item_code === `YXZXPTWS_WS_${i}`) {
+                            const tail = allNums.map(n => n % 10);
+                            if (tail.includes(i)) {
+                                winRecords.push(bet);
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                // 总肖：选择1个总肖数，开奖的7个号码对应的不同生肖的数量与投注的总肖数相同，即为中奖。
+                if (bet.item_code.startsWith('YXZXPTWS_ZX_')) {
+                    const zodiacs = this.betRuleHelper.addRulePrefix('YXZXPTWS_ZX'); // { ZX_1: [...], ZX_2: [...], ... }
+                    let matchCount = 0;
+                    for (let i = 2; i <= 7; i++) {
+                        if (bet.item_code === `YXZXPTWS_ZX_${i}LX`) {
+                            for (const [zodiac, nums] of Object.entries(zodiacs)) {
+                                if (allNums.some(n => nums.includes(n))) {
+                                    matchCount++;
+                                }
+                            }
+                            if (matchCount >= i) {
+                                winRecords.push(bet);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // 总肖单双：开奖的7个号码对应的不同生肖的数量3、5、7为“总肖单”，2、4、6为“总肖双”。
+                if (bet.item_code.startsWith('YXZXPTWS_ZX_ZX_')) {
+                    const zodiacs = this.betRuleHelper.addRulePrefix('YXZXPTWS_ZX');
+                    let matchCount = 0;
+                    for (const [zodiac, nums] of Object.entries(zodiacs)) {
+                        if (allNums.some(n => nums.includes(n))) {
+                            matchCount++;
+                        }
+                    }
+                    if (matchCount % 2 === 0 && bet.item_code === `YXZXPTWS_ZX_ZX_SHUANG`) {
+                        winRecords.push(bet);
+                        break;
+                    }
+                    if (matchCount % 2 === 1 && bet.item_code === `YXZXPTWS_ZX_ZX_DAN`) {
+                        winRecords.push(bet);
+                        break;
+                    }
+                }
             }
+            const t = await db.transaction();
+            try {
+                for (const bet of winRecords) {
+                    const winAmount = bet.bet_amount * bet.odds;
+                    await bet.update({ record_id: record.id, is_calculated: true, is_win: 2, win_amount: winAmount }, { transaction: t });   
+                }
+                await Bet.update(
+                    { record_id: record.id, is_calculated: true, is_win: 1, win_amount: 0 },
+                    { where: { is_calculated: false, category_id: 6, batch_number: record.batch_number }, transaction: t }
+                );
+                await t.commit();
+            } catch (error) {
+                await t.rollback();
+                console.log('BetCalculator CALCULATE_CATEGORY_6 winRecords error:', error);
+            }
+
         } catch (error) {
             console.log('BetCalculator CALCULATE_CATEGORY_6 error:', error); 
         }
     }
 
-    CALCULATE_CATEGORY_7 = async (record) => {}
+    CALCULATE_CATEGORY_7 = async (record) => {
+        try {
+            const allNums = [record.num1, record.num2, record.num3, record.num4, record.num5, record.num6, record.num7];
+            const winRecords = [];
+            const tieRecords = [];
+            const bets = await Bet.findAll({
+                where: { is_calculated: false, category_id: 7 },
+            });
 
-    CALCULATE_CATEGORY_8 = async (record) => {}
+            for (const bet of bets) {
+
+                const sum = allNums.reduce((a, b) => a + b, 0);
+
+                // 总和大小：7个开奖号码之和≥176为“总和大”，≤174为“总和小”，等于175时为和，退还本金。
+                if (sum >= 176 && bet.item_code === 'ZH_DA') {
+                    winRecords.push(bet);
+                } else if (sum <= 174 && bet.item_code === 'ZH_XIAO') {
+                    winRecords.push(bet);
+                } else if (sum === 175) {
+                    tieRecords.push(bet);
+                }
+
+                // 总和单双：7个开奖号码之和的个位数1、3、5、7、9为“总和单”，0、2、4、6、8为“总和双”。
+                const tail = sum % 10;
+                if (tail % 2 === 0 && bet.item_code === 'ZH_SHUANG') {
+                    winRecords.push(bet);
+                } else if (tail % 2 === 1 && bet.item_code === 'ZH_DAN') {
+                    winRecords.push(bet);
+                }
+
+                // 总和大小不含和：7个开奖号码之和≥175为“大”，≤174为“小”，无和值。
+                if (sum >= 175 && bet.item_code === 'ZH_DA_WH') {
+                    winRecords.push(bet);
+                } else if (sum <= 174 && bet.item_code === 'ZH_XIAO_WH') {
+                    winRecords.push(bet);
+                }
+
+                // 总和单双不含和：7个开奖号码之和的个位数1、3、5、7、9为“单”，0、2、4、6、8为“双”，无和值。
+                if (sum != 175) {
+                    if (tail % 2 === 0 && bet.item_code === 'ZH_SHUANG_WH') {
+                        winRecords.push(bet);
+                    }
+                    if (tail % 2 === 1 && bet.item_code === 'ZH_DAN_WH') {
+                        winRecords.push(bet);
+                    }
+                }
+
+            }
+
+            const t = await db.transaction();
+            try {
+                for (const bet of winRecords) {
+                    const winAmount = bet.bet_amount * bet.odds;
+                    await bet.update({ record_id: record.id, is_calculated: true, is_win: 2, win_amount: winAmount }, { transaction: t });   
+                }   
+                for (const bet of tieRecords) {
+                    await bet.update({ record_id: record.id, is_calculated: true, is_win: 3, win_amount: 0 }, { transaction: t });
+                }
+                await Bet.update(
+                    { record_id: record.id, is_calculated: true, is_win: 1, win_amount: 0 },
+                    { where: { is_calculated: false, category_id: 7, batch_number: record.batch_number }, transaction: t }
+                );
+                await t.commit();
+            } catch (error) {
+                await t.rollback();
+                console.log('BetCalculator CALCULATE_CATEGORY_7 winRecords error:', error);
+            }
+        } catch (error) {
+            console.log('BetCalculator CALCULATE_CATEGORY_7 error:', error);
+        }
+    }
+
+    CALCULATE_CATEGORY_8 = async (record) => {
+        try {
+            // 自选：从49个号码中任选1个号码为一注，如开奖的7个号码中包含选择的号码，即中奖。
+            // 举例：开奖号码01,02,03,04,05,06+07，投注「02」，则中奖。
+            const allNums = [record.num1, record.num2, record.num3, record.num4, record.num5, record.num6, record.num7];
+            const winRecords = [];
+            const bets = await Bet.findAll({
+                where: { is_calculated: false, category_id: 8 },
+            });
+            for (const bet of bets) {
+                const num = parseInt(bet.item_code.replace('ZX_', '')); // 例如：ZX_8
+                if (allNums.includes(num)) {
+                    winRecords.push(bet);
+                }
+            }
+
+            const t = await db.transaction();
+            try {
+                for (const bet of winRecords) {
+                    const winAmount = bet.bet_amount * bet.odds;
+                    await bet.update({ record_id: record.id, is_calculated: true, is_win: 2, win_amount: winAmount }, { transaction: t });   
+                }
+                await Bet.update(
+                    { record_id: record.id, is_calculated: true, is_win: 1, win_amount: 0 },
+                    { where: { is_calculated: false, category_id: 8, batch_number: record.batch_number }, transaction: t }
+                );
+                await t.commit();
+            } catch (error) {
+                await t.rollback();
+                console.log('BetCalculator CALCULATE_CATEGORY_8 winRecords error:', error);
+            }
+        } catch (error) {
+            console.log('BetCalculator CALCULATE_CATEGORY_8 error:', error);
+        }
+    }
+
+    CALCULATE_CATEGORY_9 = async (record) => {
+        try {
+            // 从49个号码中任意选择5~12个号码为一注，如开奖的所有正码和特码皆与选择的号码不同，即中奖。
+            // 举例：开奖号码01,02,03,04,05,06+07，投注「08,09,10,11,12」，则中奖。
+            // 7个开奖号码，一个都不在所选号码内
+            const allNums = [record.num1, record.num2, record.num3, record.num4, record.num5, record.num6, record.num7];
+            const winRecords = [];
+            const bets = await Bet.findAll({
+                where: { is_calculated: false, category_id: 9 },
+            });
+            for (const bet of bets) {
+                const codes = bet.item_code.split(',').map(code => code.trim()); // 例如：ZXBZ_8,ZXBZ_9,ZXBZ_10,ZXBZ_11,ZXBZ_12
+                const nums = codes.map(code => parseInt(code.replace('ZXBZ_', '')));
+                if (!nums.some(n => allNums.includes(n))) {
+                    winRecords.push(bet);
+                }
+            }
+
+            const t = await db.transaction();
+            try {
+                for (const bet of winRecords) {
+                    const winAmount = bet.bet_amount * bet.odds;
+                    await bet.update({ record_id: record.id, is_calculated: true, is_win: 2, win_amount: winAmount }, { transaction: t });   
+                }
+                await Bet.update(
+                    { record_id: record.id, is_calculated: true, is_win: 1, win_amount: 0 },
+                    { where: { is_calculated: false, category_id: 9, batch_number: record.batch_number }, transaction: t }
+                );
+                await t.commit();
+            } catch (error) {
+                await t.rollback();
+                console.log('BetCalculator CALCULATE_CATEGORY_9 winRecords error:', error);
+            }
+        } catch (error) {
+            console.log('BetCalculator CALCULATE_CATEGORY_9 error:', error);
+        }
+    }
 
     RUN = async (record) => {
         try {
