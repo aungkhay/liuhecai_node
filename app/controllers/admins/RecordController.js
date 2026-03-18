@@ -56,7 +56,6 @@ class Controller {
             const offset = this.getOffset(page, perPage);
             const lottery_type = req.query.lottery_type || 'aomen'; // 'aomen' or 'hongkong' or 'platform'
             let Model = null;
-            let totalBetAmount = 0;
 
             if (lottery_type === 'hongkong') {
                 Model = HongKongRecord;
@@ -64,11 +63,6 @@ class Controller {
                 Model = AomenRecord;
             } else {
                 Model = PlatformRecord;
-                totalBetAmount = await Bet.sum('bet_amount', {
-                    where: {
-                        is_calculated: 0
-                    }
-                });
             }
 
             const { count, rows } = await Model.findAndCountAll({
@@ -78,7 +72,6 @@ class Controller {
             });
 
             const data = {
-                total_bet_amount: totalBetAmount,
                 records: rows,
                 meta: { 
                     page: page,
@@ -281,64 +274,34 @@ class Controller {
             }
 
             const { num1, num2, num3, num4, num5, num6, num7, batch_number } = req.body;
+            const allNums = [num1, num2, num3, num4, num5, num6, num7];
+            const zmNums = [num1, num2, num3, num4, num5, num6];
 
-            const betExists = await Bet.findOne({
+            const totalBetAmount = await Bet.sum('bet_amount', {
                 where: {
                     batch_number: batch_number,
                     is_calculated: 0
                 }
-            });
-            if (!betExists) {
-                return MyResponse(res, this.ResCode.SUCCESS.code, true, '检查完成', { total_bet_amount: 0 });
+            }) || 0; 
+
+            let totalWinAmount = 0;
+            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_1(num7);
+            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_2(zmNums);
+            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_3(zmNums);
+            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_4(allNums);
+            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_5(allNums, num7);
+            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_6(allNums);
+            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_7(allNums);
+            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_8(allNums);
+            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_9(allNums);
+
+            const data = {
+                total_bet_amount: totalBetAmount,
+                total_win_amount: totalWinAmount,
+                profit_loss: totalBetAmount - totalWinAmount
             }
 
-            const allNums = [num1, num2, num3, num4, num5, num6, num7];
-            const zmNums = [num1, num2, num3, num4, num5, num6];
-
-            const TM_ItemCodes = await this.betRuleHelper.TM_ITEM_CODES(num7);
-            const ZM_ITEM_CODES = this.betRuleHelper.ZM_ITEM_CODES(zmNums);
-            const ZMT_ItemCodes = this.betRuleHelper.ZMT_ITEM_CODES(zmNums);
-            const LXLW_ItemCodes = await this.betRuleHelper.LXLW_ITEM_CODES(allNums);
-            const LM_ItemCodes = await this.betRuleHelper.LM_ITEM_CODES(allNums, num7);
-            const YXZXPTWS_ItemCodes = this.betRuleHelper.YXZXPTWS_ITEM_CODES(allNums);
-            const ZH_ITEM_CODES = this.betRuleHelper.ZH_ITEM_CODES(allNums);
-            const ZXBZ_ItemCodes = await this.betRuleHelper.ZXBZ_ITEM_CODES(allNums);
-            
-            let itemCodes = [
-                ...TM_ItemCodes, 
-                ...ZM_ITEM_CODES, 
-                ...ZMT_ItemCodes, 
-                ...LXLW_ItemCodes, 
-                ...LM_ItemCodes, 
-                ...YXZXPTWS_ItemCodes, 
-                ...ZH_ITEM_CODES, 
-                ...ZXBZ_ItemCodes
-            ]
-            for (let num of allNums) {
-                itemCodes.push(`ZX_${num}`);
-            }
-
-            // make itemCodes unique
-            itemCodes = [...new Set(itemCodes)];
-            // console.log('匹配到的投注项:', itemCodes);
-
-            if (!itemCodes.length) {
-                return MyResponse(res, this.ResCode.SUCCESS.code, true, '检查完成', { total_bet_amount: 0 });
-            }
-
-            const batchSize = 50;
-            const totalCodes = itemCodes.length;
-            let totalBetAmount = 0;
-            for (let i = 0; i < totalCodes; i += batchSize) {
-                const batchCodes = itemCodes.slice(i, i + batchSize);
-                totalBetAmount += await Bet.sum('bet_amount', {
-                    where: {
-                        item_code: { [Op.in]: batchCodes },
-                    },
-                }) || 0;
-            }
-
-            return MyResponse(res, this.ResCode.SUCCESS.code, true, '检查完成', { total_bet_amount: totalBetAmount || 0 });
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, '检查完成', data);
         } catch (error) {
             console.error(error);
             return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});

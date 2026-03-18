@@ -51,17 +51,19 @@ class Controller {
                 return MyResponse(res, this.ResCode.VALIDATE_FAIL.code, false, this.ResCode.VALIDATE_FAIL.msg, {}, errors);
             }
             
-            let batch_number = null;
+            const now = new Date();
+            const year = now.getFullYear();
+            let batch_number = `${year % 100}001`;
             const lastRecord = await PlatformRecord.findOne({
-                attributes: ['batch_number'],
+                attributes: ['batch_number', 'year'],
                 order: [['id', 'DESC']],
             });
             if (lastRecord) {
-                batch_number = lastRecord.batch_number;
-            } else {
-                const now = new Date();
-                const year = now.getFullYear();
-                batch_number = `${year % 100}001`;
+                if (lastRecord.year === year) {
+                    batch_number = `${year % 100}${String(Number(lastRecord.batch_number.slice(2)) + 1).padStart(3, '0')}`;
+                } else {
+                    batch_number = `${year % 100}001`;
+                }
             }
 
             const bets = req.body.bets;
