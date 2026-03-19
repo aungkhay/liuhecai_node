@@ -275,7 +275,6 @@ class Controller {
 
             const { num1, num2, num3, num4, num5, num6, num7, batch_number } = req.body;
             const allNums = [num1, num2, num3, num4, num5, num6, num7];
-            const zmNums = [num1, num2, num3, num4, num5, num6];
 
             const totalBetAmount = await Bet.sum('bet_amount', {
                 where: {
@@ -284,16 +283,16 @@ class Controller {
                 }
             }) || 0; 
 
+            const bets = await Bet.findAll({
+                where: { is_calculated: false, batch_number: batch_number },
+                attributes: ['category_id'],
+                group: ['category_id']
+            });
+
             let totalWinAmount = 0;
-            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_1(num7);
-            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_2(zmNums, num7);
-            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_3(zmNums);
-            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_4(allNums);
-            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_5(allNums, zmNums, num7);
-            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_6(allNums);
-            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_7(allNums);
-            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_8(allNums);
-            totalWinAmount += await this.betRuleHelper.CATEGORY_WIN_9(allNums);
+            for (const bet of bets) {
+                totalWinAmount += (this.betRuleHelper[`CATEGORY_WIN_${bet.category_id}`] && await this.betRuleHelper[`CATEGORY_WIN_${bet.category_id}`](allNums)) || 0;
+            }
 
             const data = {
                 total_bet_amount: totalBetAmount,
