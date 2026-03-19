@@ -115,6 +115,7 @@ class BetRuleHelper {
             const isTie = (n) => Number(n) === 49;
             
             const winRecords = [];
+            const tieRecords = [];
 
             const bets = await Bet.findAll({
                 where: { is_calculated: false, category_id: 1 },
@@ -150,6 +151,9 @@ class BetRuleHelper {
                 if (TM_SM_RULES[bet.item_code] && TM_SM_RULES[bet.item_code](num7)) {
                     winRecords.push(bet);
                 }
+                if (bet.item_code === `TM_SM_49` && isTie(num7)) {
+                    tieRecords.push(bet);
+                }
 
                 // 特码-号码 TM_HM
                 if (bet.item_code === `TM_HM_${num7}`) {
@@ -176,6 +180,11 @@ class BetRuleHelper {
                     // TM_SBB_HONG / TM_SBB_LAN / TM_SBB_LV
                     if (bet.item_code === `TM_SBB_${colorCode}`) {
                         winRecords.push(bet);
+                        break;
+                    }
+                    // 49 不参与半波组合（与你原逻辑一致）
+                    if (num7 === 49) {
+                        tieRecords.push(bet);
                         break;
                     }
                     for (const [suffix, fn] of Object.entries(TM_SBB_RULES)) {
@@ -211,7 +220,9 @@ class BetRuleHelper {
                 const hxCodes = bet.item_code.split(',').map(code => code.trim());
                 for (const code of hxCodes) {
                     if (TM_HX[code] && TM_HX[code].includes(num7)) {
-                        if (!isTie(num7)) {
+                        if (isTie(num7)) {
+                            tieRecords.push(bet);
+                        } else {
                             winRecords.push(bet);
                         }
                         break;
@@ -219,7 +230,9 @@ class BetRuleHelper {
                 }
 
                 // 特码-五行 TM_WX
-                if (!isTie(num7)) {
+                if (isTie(num7)) {
+                    tieRecords.push(bet);
+                } else {
                     const WX_MAP = {
                         TM_WX_JIN: this.TM_WX_JIN,
                         TM_WX_MU: this.TM_WX_MU,
@@ -238,6 +251,9 @@ class BetRuleHelper {
             for (const bet of winRecords) {
                 totalWinAmount += bet.bet_amount * bet.odds;
             }
+            for (const bet of tieRecords) {
+                totalWinAmount += bet.bet_amount; // 和局退还本金
+            }
 
             return totalWinAmount;
         } catch (error) {
@@ -252,6 +268,8 @@ class BetRuleHelper {
             const num7 = allNums[6];
 
             const winRecords = [];
+            const tieRecords = [];
+
             const bets = await Bet.findAll({
                 where: { is_calculated: false, category_id: 2 },
             });
@@ -275,7 +293,9 @@ class BetRuleHelper {
                         const num = zmNums[idx];
 
                         // tie: 该正码为49
-                        if (num !== 49) {
+                        if (num === 49) {
+                            tieRecords.push(bet);
+                        } else {
                             const tail = num % 10;
                             const sum = this.sumDigits(num);
 
@@ -356,6 +376,7 @@ class BetRuleHelper {
                             !present.includes(tmColor);
 
                         if (tie) {
+                            if (isColorBet) tieRecords.push(bet); // 红/蓝/绿七色波退本金
                             if (isTieBet) winRecords.push(bet);   // 和局注单中奖
                         } else {
                             const max = Math.max(score.HONG, score.LAN, score.LV); // 找出最高分数
@@ -363,7 +384,7 @@ class BetRuleHelper {
 
                             // 若出现并列最高：你们若有明确规则请替换；这里先按“退还本金”保守处理
                             if (winners.length !== 1) {
-                                // if (isColorBet) tieRecords.push(bet);
+                                if (isColorBet) tieRecords.push(bet);
                             } else {
                                 const winColor = winners[0];
                                 if (isColorBet && code === winColor) winRecords.push(bet);
@@ -377,6 +398,9 @@ class BetRuleHelper {
             for (const bet of winRecords) {
                 const winAmount = bet.bet_amount * bet.odds;
                 totalWinAmount += winAmount;
+            }
+            for (const bet of tieRecords) {
+                totalWinAmount += bet.bet_amount; // 和局退还本金
             }
 
             return totalWinAmount;
@@ -655,6 +679,8 @@ class BetRuleHelper {
     CATEGORY_WIN_7 = async (allNums) => {
          try {
             const winRecords = [];
+            const tieRecords = [];
+
             const bets = await Bet.findAll({
                 where: { is_calculated: false, category_id: 7 },
             });
@@ -668,6 +694,8 @@ class BetRuleHelper {
                     winRecords.push(bet);
                 } else if (sum <= 174 && bet.item_code === 'ZH_XIAO') {
                     winRecords.push(bet);
+                } else if (sum === 175) {
+                    tieRecords.push(bet);
                 }
 
                 // 总和单双：7个开奖号码之和的个位数1、3、5、7、9为“总和单”，0、2、4、6、8为“总和双”。
@@ -702,6 +730,9 @@ class BetRuleHelper {
                 const winAmount = bet.bet_amount * bet.odds;
                 totalWinAmount += winAmount;
             } 
+            for (const bet of tieRecords) {
+                totalWinAmount += bet.bet_amount; // 和局退还本金
+            }
 
             return totalWinAmount;
         } catch (error) {

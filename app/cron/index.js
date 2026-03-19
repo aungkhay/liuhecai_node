@@ -158,6 +158,7 @@ class Cron {
                 return;
             }
             const recordObj = JSON.parse(record);
+            console.log(recordObj)
             if (recordObj.status === 1) {
                 console.log('Bets are in the calculating process, please wait...');
                 return;
@@ -172,12 +173,12 @@ class Cron {
                 console.log('No platform record found for bet calculation');
                 return;
             }
-            if (result.calculate_status === 2) {
+            if (result.status === 2) {
                 console.log('Bet calculation already completed for this record');
                 await this.redisHelper.deleteKey(`CALCULATE_BET_RESULTS`);
                 return;
             }
-            if (result.calculate_status === 1) {
+            if (result.status === 1) {
                 console.log('Bet calculation already in process for this record');
                 return;
             }

@@ -138,7 +138,14 @@ class Controller {
                 limit: perPage,
                 order: [['id', 'DESC']],
             });
+
+            const totalBetAmount = await Bet.sum('bet_amount', { where: whereConditions }) || 0;
+            const totalWinAmount = await Bet.sum('win_amount', { where: whereConditions }) || 0;
+
             const data = {
+                total_bet_amount: totalBetAmount,
+                total_win_amount: totalWinAmount,
+                profit_amount: totalBetAmount - totalWinAmount,
                 bets: rows,
                 meta: {
                     page: page,
@@ -150,6 +157,41 @@ class Controller {
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', data);
         } catch (error) {
             console.error('Error in BET_HISTORY:', error);
+            return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+        }
+    }
+
+    BET_PROFIT = async (req, res) => {
+        try {
+            const page = parseInt(req.query.page || 1);
+            const perPage = parseInt(req.query.perPage || 10);
+
+            // 计算总盈利金额
+            // Sum group by batch_number
+            const { count, rows } = await Bet.findAndCountAll({
+                attributes: [
+                    'batch_number',
+                    [fn('SUM', col('bet_amount')), 'total_bet_amount'],
+                    [fn('SUM', col('win_amount')), 'total_win_amount'],
+                ],
+                group: ['batch_number'],
+                order: [['batch_number', 'DESC']],
+                offset: this.getOffset(page, perPage),
+                limit: perPage,
+            });
+
+            const data = {
+                profits: rows,
+                meta: {
+                    page: page,
+                    perPage: perPage,
+                    totalPage: count.length > 0 ? Math.ceil(count.length / perPage) : count,
+                    total: count.length
+                }
+            }
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', data);
+        } catch (error) {
+            console.error('Error in BET_PROFIT:', error);
             return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
         }
     }

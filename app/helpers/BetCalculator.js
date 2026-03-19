@@ -152,7 +152,7 @@ class BetCalculator {
                     await bet.update({ record_id: record.id, is_calculated: true, is_win: 2, win_amount: winAmount }, { transaction: t });   
                 }
                 for (const bet of tieRecords) {
-                    await bet.update({ record_id: record.id, is_calculated: true, is_win: 3, win_amount: 0 }, { transaction: t });
+                    await bet.update({ record_id: record.id, is_calculated: true, is_win: 3, win_amount: bet.bet_amount }, { transaction: t });
                 }
 
                 await Bet.update(
@@ -308,7 +308,7 @@ class BetCalculator {
                     await bet.update({ record_id: record.id, is_calculated: true, is_win: 2, win_amount: winAmount }, { transaction: t });   
                 }
                 for (const bet of tieRecords) {
-                    await bet.update({ record_id: record.id, is_calculated: true, is_win: 3, win_amount: 0 }, { transaction: t });
+                    await bet.update({ record_id: record.id, is_calculated: true, is_win: 3, win_amount: bet.bet_amount }, { transaction: t });
                 }
                 await Bet.update(
                     { record_id: record.id, is_calculated: true, is_win: 1, win_amount: 0 },
@@ -674,7 +674,7 @@ class BetCalculator {
                     await bet.update({ record_id: record.id, is_calculated: true, is_win: 2, win_amount: winAmount }, { transaction: t });   
                 }   
                 for (const bet of tieRecords) {
-                    await bet.update({ record_id: record.id, is_calculated: true, is_win: 3, win_amount: 0 }, { transaction: t });
+                    await bet.update({ record_id: record.id, is_calculated: true, is_win: 3, win_amount: bet.bet_amount }, { transaction: t });
                 }
                 await Bet.update(
                     { record_id: record.id, is_calculated: true, is_win: 1, win_amount: 0 },
