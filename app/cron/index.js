@@ -2,9 +2,11 @@ let cron = require('node-cron');
 const axios = require('axios');
 const ZodiacHelper = require('../helpers/ZodiacHelper');
 const RedisHelper = require('../helpers/RedisHelper');
+const BetRuleHelper = require('../helpers/BetRuleHelper');
 const BetCalculator = require('../helpers/BetCalculator');
-const { HongKongRecord, AomenRecord, PlatformRecord, BetCategory } = require('../models');
+const { HongKongRecord, AomenRecord, PlatformRecord, BetCategory, Bet, ResultGuess, TouZiPingTe, DoubleColor, db } = require('../models');
 const moment = require('moment');
+const { errLogger } = require('../helpers/Logger');
 
 class Cron {
     constructor(app) {
@@ -24,6 +26,7 @@ class Cron {
             { animal: "dog", from_date: "2030-02-03", to_date: "2031-01-22" }
         ]
         this.zodiacHelper = new ZodiacHelper();
+        this.betRuleHelper = new BetRuleHelper();
     }
 
     START = () => {
@@ -32,7 +35,8 @@ class Cron {
         cron.schedule('45 21 * * *', () => this.GET_HK_HISTORY(1)).start();
         // Run every minute
         cron.schedule('* * * * *', () => this.CALCULATE_BET()).start();
-
+        // Run 8:32 PM every day
+        cron.schedule('32 20 * * *', () => this.CREATE_BET_RESULT()).start();
     }
 
     GET_AM_HISTORY = async (rows = 2000) => {
@@ -146,6 +150,160 @@ class Cron {
             }
         } catch (error) {
             console.log(error); 
+        }
+    }
+
+    CREATE_BET_RESULT = async () => {
+        try {
+            const allNums = [];
+
+            while (allNums.length < 7) {
+                const rand = Math.floor(Math.random() * 49) + 1;
+                if (!allNums.includes(rand)) {
+                    allNums.push(rand);
+                }
+            }
+
+            const lastRecord = await PlatformRecord.findOne({
+                attributes: ['batch_number', 'calculate_status'],
+                order: [['draw_date', 'DESC']]
+            });
+            if (lastRecord && lastRecord.calculate_status != 2) {
+                console.log('[Cron] Last record is not calculated yet.');
+                return;
+            }
+
+            const now = new Date();
+            const year = now.getFullYear();
+            let current_year = year;
+            let batch_number = `${current_year % 100}000`;
+            if (lastRecord) {
+                // Check if the last record's batch number is from the current year
+                const recordYear = Math.floor(Number(lastRecord.batch_number) / 1000);
+                if (recordYear === current_year % 100) {
+                    batch_number = Number(lastRecord.batch_number) + 1;
+                }
+            }
+
+            const totalBetAmount = await Bet.sum('bet_amount', {
+                where: {
+                    batch_number: batch_number,
+                    is_calculated: 0
+                }
+            }) || 0; 
+
+            const bets = await Bet.findAll({
+                where: { is_calculated: false, batch_number: batch_number },
+                attributes: ['category_id'],
+                group: ['category_id']
+            });
+            if (!bets || bets.length === 0) {
+                console.log('[Cron] No bets found');
+                return;
+            }
+
+            let totalWinAmount = 0;
+            for (const bet of bets) {
+                totalWinAmount += (this.betRuleHelper[`CATEGORY_WIN_${bet.category_id}`] && await this.betRuleHelper[`CATEGORY_WIN_${bet.category_id}`](allNums)) || 0;
+            }
+
+            const profitLossPercentage = totalBetAmount > 0 ? ((totalBetAmount - totalWinAmount) / totalBetAmount) * 100 : 0;
+            console.log(`[Cron] Profit/Loss percentage: ${profitLossPercentage.toFixed(2)}%`);
+            if (profitLossPercentage < 20) {
+                return this.CREATE_BET_RESULT();
+            }
+
+            const obj = {
+                year: current_year,
+                batch_number: batch_number,
+                num1: allNums[0],
+                num2: allNums[1],
+                num3: allNums[2],
+                num4: allNums[3],
+                num5: allNums[4],
+                num6: allNums[5],
+                num7: allNums[6],
+                draw_date: new Date(),
+                num1_desc: null,
+                num2_desc: null,
+                num3_desc: null,
+                num4_desc: null,
+                num5_desc: null,
+                num6_desc: null,
+                num7_desc: null,
+                calculate_status: 1
+            }
+
+            const orderedZodiacs = this.zodiacHelper.orderedZodiac();
+            const allZodiacs = this.zodiacHelper.zodiac();
+            // console.log('Ordered Zodiacs:', orderedZodiacs);
+            for (let i = 0; i < 7; i++) {
+                const num = allNums[i];
+                for (const code in orderedZodiacs) {
+                    if (!Object.hasOwn(orderedZodiacs, code)) continue;
+                    const numbers = orderedZodiacs[code];
+                    if (numbers.includes(num)) {
+                        const zodiacInfo = allZodiacs.find(z => z.code === code);
+                        const wuxing = this.zodiacHelper.getWuxingById(num);
+                        const color = this.zodiacHelper.getColorById(num);
+                        obj[`num${i + 1}_desc`] = `${zodiacInfo.name}/${wuxing}/${color}`;
+                        break;
+                    }
+                }
+            }
+            
+            const resultGuess = await ResultGuess.findOne({ where: { batch_number: batch_number }, attributes: ['id', 'zodiac_attr'] });
+            let result_match = 2; // 0 => normal | 1 => match | 2 => not match
+            if (resultGuess) {
+                const attributes = this.zodiacHelper.zodiacAttributes();
+                const zodiacs = attributes[resultGuess.zodiac_attr]; // ["鼠","牛","虎","猴","狗","猪"]
+
+                const zodiacName = obj.num7_desc.split('/'); // 鼠/金/blue
+                if (zodiacs.includes(zodiacName[0])) {
+                    result_match = 1;
+                }
+            }
+            const touziPingTeRecord = await TouZiPingTe.findOne({
+                attributes: ['id', 'batch_start', 'batch_end', 'zodiac_name', 'open_count'],
+                order: [['id', 'DESC']],
+            });
+            const zodiacNameArr = [];
+            if (touziPingTeRecord && (touziPingTeRecord.batch_start >= batch_number || touziPingTeRecord.batch_end <= batch_number)) {
+                for (let i = 1; i <= 7; i++) {
+                    const zName = obj[`num${i}_desc`].split('/');
+                    zodiacNameArr.push(zName[0]);
+                }
+            }
+            const doubleColor = await DoubleColor.findOne({ where: { year: current_year, batch_number: batch_number } });
+
+            const t = await db.transaction();
+            try {
+                const record = await PlatformRecord.create(obj, { transaction: t });
+
+                if (resultGuess) {
+                    await resultGuess.update({ result_match: result_match, result_number: obj.num7, zodiac_name: obj.num7_desc.split('/')[0] }, { transaction: t });
+                }
+                if (touziPingTeRecord && zodiacNameArr.includes(touziPingTeRecord.zodiac_name)) {
+                    await touziPingTeRecord.update({ open_count: touziPingTeRecord.open_count + 1 }, { transaction: t });
+                }
+                if (touziPingTeRecord && touziPingTeRecord.batch_end == batch_number) {
+                    await touziPingTeRecord.update({ is_finished: 1 }, { transaction: t });
+                }
+                if (doubleColor) {
+                    await doubleColor.update({ result_number: obj.num7, zodiac_name: obj.num7_desc.split('/')[0], match_color: obj.num7_desc.split('/')[2]  }, { transaction: t });
+                }
+
+                await this.redisHelper.setValue(`CALCULATE_BET_RESULTS`, JSON.stringify({ id: record.id, status: 0 }));
+                await t.commit();
+            } catch (error) {
+                await t.rollback();
+                console.log(error);
+                errLogger(`[Cron][CREATE_BET_RESULT]: ${error.message}`);
+            }
+
+        } catch (error) {
+            console.log(error);
+            errLogger(`[Cron][CREATE_BET_RESULT]: ${error.message}`);
         }
     }
 

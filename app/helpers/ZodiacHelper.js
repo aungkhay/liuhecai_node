@@ -237,6 +237,12 @@ class Helper {
         return result ? result.wuxing : null;
     }
 
+    getColorById = (num) => {
+        const zodiacNumbers = this.zodiacNumbers();
+        const result = zodiacNumbers.find(item => item.id === num);
+        return result ? result.color : null;
+    }
+
     orderedZodiac() {
         let data = {};
 
