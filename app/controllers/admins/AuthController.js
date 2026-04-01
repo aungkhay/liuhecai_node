@@ -87,6 +87,9 @@ class Controller {
             const userId = req.user_id;
             const user = await User.findByPk(userId, { attributes: ['id', 'name', 'phone_number'] });
 
+            const permissions = await this.commonHelper.getAllPermissions(userId);
+            user.dataValues.permissions = permissions;
+
             return MyResponse(res, this.ResCode.SUCCESS.code, true, 'Success', user);
         } catch (error) {
             return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, 'Server Erorr!', {});

@@ -1,5 +1,5 @@
 const MyResponse = require('../../helpers/MyResponse');
-const { AomenRecord, HongKongRecord, PlatformRecord, db, ResultGuess, TouZiPingTe, DoubleColor, Bet, BetNumber } = require('../../models');
+const { AomenRecord, HongKongRecord, PlatformRecord, db, ResultGuess, TouZiPingTe, DoubleColor, Bet, BetNumber, User } = require('../../models');
 const CommonHelper = require('../../helpers/CommonHelper');
 const ZodiacHelper = require('../../helpers/ZodiacHelper');
 const BetRuleHelper = require('../../helpers/BetRuleHelper');
@@ -57,15 +57,22 @@ class Controller {
             const lottery_type = req.query.lottery_type || 'aomen'; // 'aomen' or 'hongkong' or 'platform'
             let Model = null;
 
+            let include = [];
             if (lottery_type === 'hongkong') {
                 Model = HongKongRecord;
             } else if (lottery_type === 'aomen') {
                 Model = AomenRecord;
             } else {
                 Model = PlatformRecord;
+                include = [{
+                    model: User,
+                    as: 'admin',
+                    attributes: ['id', 'name']
+                }];
             }
 
             const { count, rows } = await Model.findAndCountAll({
+                include: include,
                 offset: offset,
                 limit: perPage,
                 order: [['draw_date', 'DESC']],
@@ -126,10 +133,10 @@ class Controller {
                 const resultGuess = await ResultGuess.findOne({ where: { batch_number: batch_number }, attributes: ['id', 'zodiac_attr'] });
                 
                 let result_match = 2;
+                const zodiacName = req.body.num7_desc.split('/'); // 鼠/金/blue
                 if (resultGuess) {
                     const attributes = this.zodiacHelper.zodiacAttributes();
                     const zodiacs = attributes[resultGuess.zodiac_attr];
-                    const zodiacName = req.body.num7_desc.split('/'); // 鼠/金/blue
                     if (zodiacs.includes(zodiacName[0])) {
                         result_match = 1;
                     }
@@ -153,7 +160,12 @@ class Controller {
 
                 const t = await db.transaction();
                 try {
-                    await Model.create(req.body, { transaction: t });
+                    console.log(req.body)
+                    const obj = {
+                        admin_id: req.user_id,
+                        ... req.body
+                    }
+                    await Model.create(obj, { transaction: t });
                     if (resultGuess) {
                         await resultGuess.update({ result_match: result_match, result_number: req.body.num7, zodiac_name: zodiacName[0] }, { transaction: t });
                     }
@@ -171,6 +183,7 @@ class Controller {
                     }
                     await t.commit();
                 } catch (error) {
+                    console.log(error)
                     await t.rollback();
                 }
             } else {

@@ -1,1 +1,7 @@
-[]
+[
+    { "model": "角色管理", "title": "角色列表", "name": "role-list" },
+    { "model": "角色管理", "title": "添加角色", "name": "role-add" },
+    { "model": "角色管理", "title": "编辑角色", "name": "role-update" },
+    { "model": "角色管理", "title": "删除角色", "name": "role-delete" },
+    { "model": "角色管理", "title": "分配权限", "name": "role-assign-permission" }
+]

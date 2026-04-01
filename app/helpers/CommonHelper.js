@@ -1,5 +1,5 @@
 const { decrypt } = require('../helpers/AESHelper');
-const { AdminLog, User } = require('../models');
+const { AdminLog, User, Permission, Role } = require('../models');
 const { errLogger } = require('./Logger');
 const TOKEN_KEY = process.env.TOKEN_KEY;
 const TOKEN_IV = process.env.TOKEN_IV;
@@ -116,6 +116,38 @@ class Helper {
             });
         } catch (error) {
             errLogger(`[AdminLogger]: ${error.stack}`);
+        }
+    }
+
+    getAllPermissions = async (adminId) => {
+        try {
+            const admin = await User.findOne({
+                where: { id: adminId, type: 1 },
+                include: {
+                    model: Role,
+                    as: 'roles',
+                    through: { attributes: [] },
+                    attributes: ['id'],
+                    include: {
+                        model: Permission,
+                        as: 'permissions',
+                        through: { attributes: [] },
+                        attributes: ['id', 'name']
+                    }
+                },
+                attributes: ['id']
+            });
+
+            const permissions = [];
+            admin.roles.forEach(role => {
+                role.permissions.forEach(perm => {
+                    permissions.push(perm.name);
+                });
+            });
+
+            return permissions;
+        } catch (error) {
+            return [];
         }
     }
 }
