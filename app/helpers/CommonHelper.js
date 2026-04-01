@@ -1,4 +1,6 @@
 const { decrypt } = require('../helpers/AESHelper');
+const { AdminLog, User } = require('../models');
+const { errLogger } = require('./Logger');
 const TOKEN_KEY = process.env.TOKEN_KEY;
 const TOKEN_IV = process.env.TOKEN_IV;
 
@@ -81,6 +83,40 @@ class Helper {
             result += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
         return result;
+    }
+
+    adminLogger = async (req, model, type) => {
+        try {
+            let token, admin;
+            const ip = this.getClientIP(req);
+            if (type != 'login') {
+                token = this.formatToken(req.header.authorization || req.header("authorization"));
+                admin = this.extractToken(token);
+            } else {
+                admin = await User.findOne({ where: { phone_number: req.body.phone }, attributes: ['id', 'relation'] });
+            }
+
+            const url = req.originalUrl;
+            const body = req.body;
+            if (body && body.hasOwnProperty('password')) {
+                delete body.password;
+            }
+            if (body && body.hasOwnProperty('login_password')) {
+                delete body.login_password;
+            }
+
+            await AdminLog.create({
+                relation: admin.relation,
+                model: model,
+                type: type,
+                admin_id: admin.id,
+                url: url,
+                content: body,
+                ip: ip
+            });
+        } catch (error) {
+            errLogger(`[AdminLogger]: ${error.stack}`);
+        }
     }
 }
 

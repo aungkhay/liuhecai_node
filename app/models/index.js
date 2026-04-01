@@ -1,9 +1,12 @@
 const db = require('../connections/Mysql');
 
+const Role = require('./Role');
+const Permission = require('./Permission');
 const Banner = require('./Banner');
 const ReferenceLink = require('./ReferenceLink');
 const Config = require('./Config');
 const User = require('./User');
+const AdminLog = require('./AdminLog');
 const AomenRecord = require('./AomenRecord');
 const HongKongRecord = require('./HongKongRecord');
 const PlatformRecord = require('./PlatformRecord');
@@ -15,6 +18,18 @@ const BetSubCategory = require('./BetSubCategory');
 const BetItem = require('./BetItem');
 const BetNumber = require('./BetNumber');
 const Bet = require('./Bet');
+
+// ========== Role ↔️ Permission ========== 
+Role.belongsToMany(Permission, { as: 'permissions', through: 'role_has_permissions', foreignKey: 'RoleId' });
+Permission.belongsToMany(Role, { through: 'role_has_permissions', foreignKey: 'PermissionId' });
+
+// Admin ↔️ Role
+User.belongsToMany(Role, { as: 'roles', through: 'admin_has_roles', foreignKey: 'AdminId' });
+Role.belongsToMany(User, { through: 'admin_has_roles', foreignKey: 'RoleId' });
+
+// ========== USER ↔️ ADMIN_LOG (1:N) ==========
+User.hasMany(AdminLog, { foreignKey: 'admin_id', as: 'logs', onDelete: 'CASCADE' });
+AdminLog.belongsTo(User, { foreignKey: 'admin_id', as: 'admin', onDelete: 'CASCADE' });
 
 // ========== BetCategory ↔️ BetSubCategory ========== 
 BetCategory.hasMany(BetSubCategory, { foreignKey: 'category_id', as: 'subCategories' });
@@ -36,11 +51,18 @@ Bet.belongsTo(BetSubCategory, { foreignKey: 'sub_category_id', as: 'subCategory'
 PlatformRecord.hasMany(Bet, { foreignKey: 'record_id', as: 'bets' });
 Bet.belongsTo(PlatformRecord, { foreignKey: 'record_id', as: 'record' });
 
+// ========== User ↔️ PlatformRecord ==========
+User.hasMany(PlatformRecord, { foreignKey: 'admin_id', as: 'platformRecords' });
+PlatformRecord.belongsTo(User, { foreignKey: 'admin_id', as: 'admin' });
+
 const models = {
+    Role,
+    Permission,
     Banner,
     ReferenceLink,
     Config,
     User,
+    AdminLog,
     AomenRecord,
     HongKongRecord,
     PlatformRecord,

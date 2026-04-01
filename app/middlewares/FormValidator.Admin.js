@@ -124,3 +124,32 @@ exports.check_number_in_bets = () => {
         check('batch_number').not().isEmpty().withMessage('期号不能为空')
     ]
 }
+
+exports.assign_roles = () => {
+    return [
+        check('roleIds').not().isEmpty().withMessage('角色ID不能为空')
+            .bail()
+            .isArray({ min: 1 }).withMessage('角色ID无效'),
+    ]
+}
+
+exports.create_role = () => {
+    return [
+        check('code', { msg: '角色代码不能为空' }).not().isEmpty(),
+        check('name', { msg: '角色名称不能为空' }).not().isEmpty(),
+    ]
+}
+
+exports.update_role = () => {
+    return [
+        check('name', { msg: '角色名称不能为空' }).not().isEmpty(),
+    ]
+}
+
+exports.assign_permissions = () => {
+    return [
+        check('permissionIds').not().isEmpty().withMessage('权限ID不能为空')
+            .bail()
+            .isArray({ min: 1 }).withMessage('权限ID无效'),
+    ]
+}

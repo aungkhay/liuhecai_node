@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../connections/Mysql');
+const User = require('./User');
 
 class PlatformRecord extends Model {}
 
@@ -90,6 +91,14 @@ PlatformRecord.init({
         defaultValue: 0,
         comment: '0-未计算, 1-计算中, 2-已计算',
     },
+    admin_id: {
+        type: DataTypes.BIGINT,
+        references: {
+            model: User,
+            key: 'id'
+        },
+        defaultValue: null
+    }
 }, {
     sequelize,
     modelName: 'PlatformRecord',

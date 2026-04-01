@@ -42,6 +42,11 @@ User.init({
         type: DataTypes.STRING,
         allowNull: false,
     },
+    relation: {
+        type: DataTypes.STRING(333),
+        allowNull: true,
+        comment: 'Full invitation chain path',
+    },
     balance: {
         type: DataTypes.DECIMAL(20, 8),
         allowNull: false,
@@ -66,7 +71,10 @@ User.init({
     modelName: 'User',
     tableName: 'users',
     timestamps: true,
-    paranoid: true
+    paranoid: true,
+    indexes: [
+        { fields: ['relation'] },
+    ]
 })
 
 module.exports = User;
