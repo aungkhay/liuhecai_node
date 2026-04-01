@@ -165,12 +165,21 @@ class Cron {
             }
 
             const lastRecord = await PlatformRecord.findOne({
-                attributes: ['batch_number', 'calculate_status'],
+                attributes: ['batch_number', 'calculate_status', 'createdAt'],
                 order: [['draw_date', 'DESC']]
             });
-            if (lastRecord && lastRecord.calculate_status != 2) {
-                console.log('[Cron] Last record is not calculated yet.');
-                return;
+            // check already have created record for today
+            if (lastRecord) {
+                const lastRecordDate = moment(lastRecord.createdAt).format('YYYY-MM-DD');
+                const today = moment().format('YYYY-MM-DD');
+                if (lastRecordDate === today) {
+                    console.log('[Cron] Bet result for today already created.');
+                    return;
+                }
+                if (lastRecord.calculate_status != 2) {
+                    console.log('[Cron] Last record is not calculated yet.');
+                    return;
+                }
             }
 
             const now = new Date();

@@ -124,15 +124,15 @@ class Controller {
             if (lottery_type === 'platform') {
                 // Result Guess Logic
                 const resultGuess = await ResultGuess.findOne({ where: { batch_number: batch_number }, attributes: ['id', 'zodiac_attr'] });
-                if (!resultGuess) {
-                    return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '请先创建结果竞猜记录', {});
-                }
-                const attributes = this.zodiacHelper.zodiacAttributes();
-                const zodiacs = attributes[resultGuess.zodiac_attr];
+                
                 let result_match = 2;
-                const zodiacName = req.body.num7_desc.split('/'); // 鼠/金/blue
-                if (zodiacs.includes(zodiacName[0])) {
-                    result_match = 1;
+                if (resultGuess) {
+                    const attributes = this.zodiacHelper.zodiacAttributes();
+                    const zodiacs = attributes[resultGuess.zodiac_attr];
+                    const zodiacName = req.body.num7_desc.split('/'); // 鼠/金/blue
+                    if (zodiacs.includes(zodiacName[0])) {
+                        result_match = 1;
+                    }
                 }
 
                 // TouZiPingTe Logic
@@ -140,38 +140,35 @@ class Controller {
                     attributes: ['id', 'batch_start', 'batch_end', 'zodiac_name', 'open_count'],
                     order: [['id', 'DESC']],
                 });
-                if (!touziPingTeRecord) {
-                    return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '请先创建投资平特记录', {});
-                }
-                if (parseInt(batch_number) > touziPingTeRecord.batch_end) {
-                    return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '当前期数超出投资平特范围', {});
-                }
-                if (parseInt(batch_number) < touziPingTeRecord.batch_start) {
-                    return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '当前期数低于投资平特范围', {});
-                }
                 let nameArr = [];
-                for (let i = 1; i <= 7; i++) {
-                    const zName = req.body[`num${i}_desc`].split('/');
-                    nameArr.push(zName[0]);
+                if (touziPingTeRecord && (touziPingTeRecord.batch_start >= batch_number || touziPingTeRecord.batch_end <= batch_number)) {
+                    for (let i = 1; i <= 7; i++) {
+                        const zName = req.body[`num${i}_desc`].split('/');
+                        nameArr.push(zName[0]);
+                    }
                 }
 
                 // Double Color
                 const doubleColor = await DoubleColor.findOne({ where: { year: req.body.year, batch_number: req.body.batch_number } });
-                if (!doubleColor) {
-                    return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '请先创建大神双波记录', {});
-                }
 
                 const t = await db.transaction();
                 try {
                     await Model.create(req.body, { transaction: t });
-                    await resultGuess.update({ result_match: result_match, result_number: req.body.num7, zodiac_name: zodiacName[0] }, { transaction: t });
-                    if (nameArr.includes(touziPingTeRecord.zodiac_name)) {
-                        await touziPingTeRecord.update({ open_count: touziPingTeRecord.open_count + 1 }, { transaction: t });
+                    if (resultGuess) {
+                        await resultGuess.update({ result_match: result_match, result_number: req.body.num7, zodiac_name: zodiacName[0] }, { transaction: t });
                     }
-                    if (batch_number == touziPingTeRecord.batch_end) {
-                        await touziPingTeRecord.update({ is_finished: 1 }, { transaction: t });
+                    if (touziPingTeRecord) {
+                         if (nameArr.includes(touziPingTeRecord.zodiac_name)) {
+                            await touziPingTeRecord.update({ open_count: touziPingTeRecord.open_count + 1 }, { transaction: t });
+                        }
+                        if (batch_number == touziPingTeRecord.batch_end) {
+                            await touziPingTeRecord.update({ is_finished: 1 }, { transaction: t });
+                        }
                     }
-                    await doubleColor.update({ result_number: req.body.num7, zodiac_name: zodiacName[0], match_color: zodiacName[2]  }, { transaction: t });
+                    
+                    if (doubleColor) {
+                        await doubleColor.update({ result_number: req.body.num7, zodiac_name: zodiacName[0], match_color: zodiacName[2]  }, { transaction: t });
+                    }
                     await t.commit();
                 } catch (error) {
                     await t.rollback();
