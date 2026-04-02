@@ -15,6 +15,7 @@ class Controller {
         this.betRuleHelper = new BetRuleHelper();
         this.ResCode = this.commonHelper.ResCode;
         this.getOffset = this.commonHelper.getOffset;
+        this.adminLogger = this.commonHelper.adminLogger;
     }
 
     PLATFORM_LAST_BATCH_NUMBER = async (req, res) => {
@@ -190,6 +191,9 @@ class Controller {
                 await Model.create(req.body);
             }
 
+            // LOG
+            this.adminLogger(req, 'Record', 'create');
+
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '记录创建成功', {});
         } catch (error) {
             console.error(error);
@@ -221,6 +225,10 @@ class Controller {
                 return MyResponse(res, this.ResCode.NOT_FOUND.code, false, '记录未找到', {});
             }
             await record.update(req.body);
+
+            // LOG
+            await this.adminLogger(req, 'Record', 'update');
+
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '记录更新成功', {});
         } catch (error) {
             console.error(error);
@@ -267,6 +275,9 @@ class Controller {
                 await t.rollback();
                 return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
             }
+
+            // LOG
+            await this.adminLogger(req, 'Record', 'delete');
             
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '记录删除成功', {});
         } catch (error) {

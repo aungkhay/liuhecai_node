@@ -1,7 +1,54 @@
 [
-    { "model": "角色管理", "title": "角色列表", "name": "role-list" },
-    { "model": "角色管理", "title": "添加角色", "name": "role-add" },
-    { "model": "角色管理", "title": "编辑角色", "name": "role-update" },
-    { "model": "角色管理", "title": "删除角色", "name": "role-delete" },
-    { "model": "角色管理", "title": "分配权限", "name": "role-assign-permission" }
+    { "model": "角色管理", "title": "列表", "name": "role-list" },
+    { "model": "角色管理", "title": "创建", "name": "role-add" },
+    { "model": "角色管理", "title": "更新", "name": "role-update" },
+    { "model": "角色管理", "title": "删除", "name": "role-delete" },
+    { "model": "角色管理", "title": "分配权限", "name": "role-assign-permission" },
+
+    { "model": "系统配置", "title": "列表", "name": "config-list" },
+    { "model": "系统配置", "title": "更新", "name": "config-update" },
+
+    { "model": "轮播图管理", "title": "列表", "name": "banner-list" },
+    { "model": "轮播图管理", "title": "上传", "name": "banner-create" },
+    { "model": "轮播图管理", "title": "删除", "name": "banner-delete" },
+
+    { "model": "用户管理", "title": "列表", "name": "user-list" },
+    { "model": "用户管理", "title": "创建", "name": "user-add" },
+    { "model": "用户管理", "title": "删除", "name": "user-delete" },
+    { "model": "用户管理", "title": "分配角色", "name": "user-assign-role" },
+    { "model": "用户管理", "title": "修改密码", "name": "user-change-password" },
+    { "model": "用户管理", "title": "修改状态", "name": "user-change-status" }, 
+
+    { "model": "彩票记录管理", "title": "列表", "name": "record-list" },
+    { "model": "彩票记录管理", "title": "创建", "name": "record-create" },
+    { "model": "彩票记录管理", "title": "更新", "name": "record-update" },
+    { "model": "彩票记录管理", "title": "删除", "name": "record-delete" },
+    { "model": "彩票记录管理", "title": "计算投注结果", "name": "record-calculate" },
+
+    { "model": "结果竞猜管理", "title": "列表", "name": "result-guess-list" },
+    { "model": "结果竞猜管理", "title": "创建", "name": "result-guess-create" },
+    { "model": "结果竞猜管理", "title": "更新", "name": "result-guess-update" },
+    { "model": "结果竞猜管理", "title": "删除", "name": "result-guess-delete" },
+
+    { "model": "投资评特管理", "title": "列表", "name": "touzi-pingte-list" },
+    { "model": "投资评特管理", "title": "创建", "name": "touzi-pingte-create" },
+    { "model": "投资评特管理", "title": "更新", "name": "touzi-pingte-update" },
+    { "model": "投资评特管理", "title": "删除", "name": "touzi-pingte-delete" },
+
+    { "model": "大神双波", "title": "列表", "name": "double-color-list" },
+    { "model": "大神双波", "title": "创建", "name": "double-color-create" },
+    { "model": "大神双波", "title": "更新", "name": "double-color-update" },
+    { "model": "大神双波", "title": "删除", "name": "double-color-delete" },
+
+    { "model": "参考链接管理", "title": "列表", "name": "reference-link-list" },
+    { "model": "参考链接管理", "title": "创建", "name": "reference-link-create" },
+    { "model": "参考链接管理", "title": "更新", "name": "reference-link-update" },
+    { "model": "参考链接管理", "title": "删除", "name": "reference-link-delete" },
+
+    { "model": "投注管理", "title": "列表", "name": "bet-list" },
+    { "model": "投注管理", "title": "执行投注", "name": "bet-do-bet" },
+    { "model": "投注管理", "title": "投注历史", "name": "bet-history" },
+    { "model": "投注管理", "title": "投注统计", "name": "bet-summary" },
+
+    { "model": "操作日志", "title": "列表", "name": "log-list" }
 ]

@@ -1,6 +1,6 @@
 const MyResponse = require('../../helpers/MyResponse');
 const CommonHelper = require('../../helpers/CommonHelper');
-const { BetCategory, BetSubCategory, BetItem, Bet, PlatformRecord } = require('../../models');
+const { BetCategory, BetSubCategory, BetItem, Bet, PlatformRecord, User } = require('../../models');
 let { validationResult } = require('express-validator');
 const { Op, fn, col } = require('sequelize');
 
@@ -79,6 +79,7 @@ class Controller {
             const newBets = bets.map(bet => ({
                 ...bet,
                 batch_number: batch_number,
+                user_id: req.user_id,
             }));
 
             await Bet.bulkCreate(newBets);
@@ -131,6 +132,11 @@ class Controller {
                 where: whereConditions,
                 include: [
                     {
+                        model: User,
+                        as: 'user',
+                        attributes: ['id', 'name', 'type'],
+                    },
+                    {
                         model: BetCategory,
                         as: 'category',
                         attributes: ['id', 'name'],
@@ -139,7 +145,7 @@ class Controller {
                         model: BetSubCategory,
                         as: 'subCategory',
                         attributes: ['id', 'name'],
-                    }
+                    },
                 ],
                 attributes: ['id', 'batch_number', 'item_code', 'item_name', 'odds', 'bet_amount', 'is_win', 'win_amount', 'remark', 'is_calculated', 'createdAt'],
                 offset: offset,

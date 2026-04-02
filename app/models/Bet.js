@@ -3,6 +3,7 @@ const sequelize = require('../connections/Mysql');
 const BetCategory = require('./BetCategory');
 const BetSubCategory = require('./BetSubCategory');
 const PlatformRecord = require('./PlatformRecord');
+const User = require('./User');
 
 class Bet extends Model {}
 
@@ -86,6 +87,14 @@ Bet.init({
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
         defaultValue: 0.0
+    },
+    user_id: {
+        type: DataTypes.BIGINT,
+        references: {
+            model: User,
+            key: 'id'
+        },
+        defaultValue: null
     }
 }, {
     sequelize,

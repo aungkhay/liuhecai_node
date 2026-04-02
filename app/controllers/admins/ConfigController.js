@@ -9,6 +9,7 @@ class Controller {
         this.commonHelper = new CommonHelper();
         this.redisHelper = new RedisHelper(app);
         this.ResCode = this.commonHelper.ResCode;
+        this.adminLogger = this.commonHelper.adminLogger;
     }
 
     GET_YEAR = async (req, res) => {
@@ -65,6 +66,10 @@ class Controller {
                 { val: `${xiaos.join(',')}|${numbers.join(',')}` },
                 { where: { type: type } }
             );
+
+            // LOG
+            await this.adminLogger(req, 'Config', `update`);
+
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', {});
         } catch (error) {
             console.error(error);

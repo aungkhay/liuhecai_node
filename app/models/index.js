@@ -55,6 +55,10 @@ Bet.belongsTo(PlatformRecord, { foreignKey: 'record_id', as: 'record' });
 User.hasMany(PlatformRecord, { foreignKey: 'admin_id', as: 'platformRecords' });
 PlatformRecord.belongsTo(User, { foreignKey: 'admin_id', as: 'admin' });
 
+// ========== User ↔️ Bet ==========
+User.hasMany(Bet, { foreignKey: 'user_id', as: 'bets' });
+Bet.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+
 const models = {
     Role,
     Permission,

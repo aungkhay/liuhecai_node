@@ -9,7 +9,7 @@ class Controller {
     constructor () {
         this.commonHelper = new CommonHelper();
         this.ResCode = this.commonHelper.ResCode;
-        this.adminLogger = this.commonHelper.AdminLogger;
+        this.adminLogger = this.commonHelper.adminLogger;
     }
 
     INDEX = async (req, res) => {
@@ -49,6 +49,10 @@ class Controller {
 
                 const fileName = req.file.filename;
                 await Banner.create({ image: `/uploads/banners/${fileName}` });
+
+                // LOG
+                await this.adminLogger(req, 'Banner', `upload`);
+
                 return MyResponse(res, this.ResCode.SUCCESS.code, true, '上传成功', {});
             })
         } catch (error) {
@@ -78,6 +82,10 @@ class Controller {
             }
 
             await banner.destroy();
+
+            // LOG
+            await this.adminLogger(req, 'Banner', `delete`);
+
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '删除成功', {});
         } catch (error) {
             errLogger(`[Banner][DELETE]: ${error.stack}`);

@@ -9,6 +9,7 @@ class Controller {
     constructor(app) {
         this.commonHelper = new CommonHelper();
         this.ResCode = this.commonHelper.ResCode;
+        this.adminLogger = this.commonHelper.adminLogger;
     }
 
     INDEX = async (req, res) => {
@@ -34,6 +35,10 @@ class Controller {
 
             const { url } = req.body;
             const link = await ReferenceLink.create({ url });
+
+            // LOG
+            await this.adminLogger(req, 'ReferenceLink', 'create');
+
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '创建成功', link);
         } catch (error) {
             console.error(error);
@@ -107,6 +112,9 @@ class Controller {
             }
             await link.update({ url });
 
+            // LOG
+            await this.adminLogger(req, 'ReferenceLink', 'update');
+
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '更新成功', link);
         } catch (error) {
             console.error(error);
@@ -133,6 +141,9 @@ class Controller {
                 }
             }
             await link.destroy();
+
+            // LOG
+            await this.adminLogger(req, 'ReferenceLink', 'delete');
 
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '删除成功', {});
         } catch (error) {

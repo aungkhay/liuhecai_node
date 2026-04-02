@@ -10,6 +10,7 @@ class Controller {
         this.ResCode = this.commonHelper.ResCode;
         this.getOffset = this.commonHelper.getOffset;
         this.redisHelper = new RedisHelper(app);
+        this.adminLogger = this.commonHelper.adminLogger;
     }
 
     INDEX = async (req, res) => {
@@ -65,6 +66,9 @@ class Controller {
                 zodiac_attr: zodiac_attr
             });
 
+            // LOG
+            await this.adminLogger(req, 'ResultGuess', 'create');
+
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '创建成功', {});
         } catch (error) {
             console.error(error);
@@ -86,6 +90,10 @@ class Controller {
             }
 
             await resultGuess.update(req.body);
+
+            // LOG
+            await this.adminLogger(req, 'ResultGuess', 'update');
+
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '更新成功', {});
         } catch (error) {
             console.error(error);
@@ -100,6 +108,10 @@ class Controller {
                 return MyResponse(res, this.ResCode.NOT_FOUND.code, false, '未找到信息', {});
             }
             await resultGuess.destroy();
+
+            // LOG
+            await this.adminLogger(req, 'ResultGuess', 'delete');
+            
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '删除成功', {});
         } catch (error) {
             console.error(error);

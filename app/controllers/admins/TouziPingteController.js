@@ -9,6 +9,7 @@ class Controller {
         this.commonHelper = new CommonHelper();
         this.ResCode = this.commonHelper.ResCode;
         this.getOffset = this.commonHelper.getOffset;
+        this.adminLogger = this.commonHelper.adminLogger;
     }
 
     LAST_BATCH_NUMBER = async (req, res) => {
@@ -119,6 +120,10 @@ class Controller {
                 batch_end,
                 zodiac_name
             });
+
+            // LOG
+            await this.adminLogger(req, 'TouZiPingTe', 'create');
+
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '创建成功', { record: record });
         } catch (error) {
             console.error(error);
@@ -142,6 +147,10 @@ class Controller {
             await record.update({
                 zodiac_name
             });
+
+            // LOG
+            await this.adminLogger(req, 'TouZiPingTe', 'update');
+            
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '更新成功', { record: record });
         } catch (error) {
             console.error(error);
@@ -170,6 +179,9 @@ class Controller {
                 }
             }
             await record.destroy();
+            // LOG
+            await this.adminLogger(req, 'TouZiPingTe', 'delete');
+
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '删除成功', {});
         } catch (error) {
             console.error(error);

@@ -10,6 +10,7 @@ class Controller {
         this.redisHelper = new RedisHelper(app);
         this.ResCode = this.commonHelper.ResCode;
         this.getOffset = this.commonHelper.getOffset;
+        this.adminLogger = this.commonHelper.adminLogger;
     }
 
     INDEX = async (req, res) => {
@@ -68,6 +69,9 @@ class Controller {
             req.body.year = year;
             const record = await DoubleColor.create(req.body);
 
+            // LOG
+            await this.adminLogger(req, 'DoubleColor', `create`);
+
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '创建成功', { record });
         } catch (error) {
             console.error(error);
@@ -89,6 +93,10 @@ class Controller {
             }
 
             await record.update(req.body);
+
+            // LOG
+            await this.adminLogger(req, 'DoubleColor', `update`);
+
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '更新成功', { record });
         } catch (error) {
             console.error(error);
@@ -105,6 +113,10 @@ class Controller {
             }
 
             await record.destroy();
+
+            // LOG
+            await this.adminLogger(req, 'DoubleColor', `delete`);
+
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '删除成功', {});
         } catch (error) {
             console.error(error);

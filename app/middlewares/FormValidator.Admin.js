@@ -153,3 +153,18 @@ exports.assign_permissions = () => {
             .isArray({ min: 1 }).withMessage('权限ID无效'),
     ]
 }
+
+exports.create_user = () => {
+    return [
+        check('name', { msg: '姓名不能为空' }).not().isEmpty(),
+        check('phone', { msg: '手机号不能为空' }).not().isEmpty(),
+        check('password', { msg: '密码不能为空' }).not().isEmpty(),
+        check('role_ids').isArray({ min: 1 }).withMessage('角色ID不能为空'),
+    ]
+}
+
+exports.change_password = () => {
+    return [
+        check('new_password', { msg: '新密码不能为空' }).not().isEmpty(),
+    ]
+}

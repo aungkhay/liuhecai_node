@@ -85,6 +85,22 @@ class Helper {
         return result;
     }
 
+    getClientIP = (req) => {
+        try {
+            var ip = req.headers['x-forwarded-for'] ||
+                req.ip ||
+                req.connection.remoteAddress ||
+                req.socket.remoteAddress ||
+                req.connection.socket.remoteAddress || '';
+            if (ip.indexOf(":") >= 0) {
+                ip = ip.split(':')[3]
+            }
+            return ip;
+        } catch (e) {
+            return '0:0:0:0';
+        }
+    }
+
     adminLogger = async (req, model, type) => {
         try {
             let token, admin;
