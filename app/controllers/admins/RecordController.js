@@ -59,6 +59,7 @@ class Controller {
             let Model = null;
 
             let include = [];
+            let lastRecord = null;
             if (lottery_type === 'hongkong') {
                 Model = HongKongRecord;
             } else if (lottery_type === 'aomen') {
@@ -70,6 +71,9 @@ class Controller {
                     as: 'admin',
                     attributes: ['id', 'name']
                 }];
+                lastRecord = await Model.findOne({
+                    order: [['id', 'DESC']],
+                });
             }
 
             const { count, rows } = await Model.findAndCountAll({
@@ -81,6 +85,7 @@ class Controller {
 
             const data = {
                 records: rows,
+                last_record: lastRecord,
                 meta: { 
                     page: page,
                     perPage: perPage,

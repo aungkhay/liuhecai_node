@@ -157,17 +157,8 @@ class Cron {
 
     CREATE_BET_RESULT = async () => {
         try {
-            const allNums = [];
-
-            while (allNums.length < 7) {
-                const rand = Math.floor(Math.random() * 49) + 1;
-                if (!allNums.includes(rand)) {
-                    allNums.push(rand);
-                }
-            }
 
             const lastRecord = await PlatformRecord.findOne({
-                attributes: ['batch_number', 'calculate_status', 'createdAt'],
                 order: [['draw_date', 'DESC']]
             });
             // check already have created record for today
@@ -181,6 +172,21 @@ class Cron {
                 if (lastRecord.calculate_status != 2) {
                     console.log('[Cron] Last record is not calculated yet.');
                     return;
+                }
+            }
+
+            const allNums = [];
+            while (allNums.length < 7) {
+                const rand = Math.floor(Math.random() * 49) + 1;
+                // rand number must not be duplicated with last record's numbers
+                if (lastRecord) {
+                    const lastNums = [lastRecord.num1, lastRecord.num2, lastRecord.num3, lastRecord.num4, lastRecord.num5, lastRecord.num6, lastRecord.num7];
+                    if (lastNums.includes(rand)) {
+                        continue;
+                    }
+                }
+                if (!allNums.includes(rand)) {
+                    allNums.push(rand);
                 }
             }
 
