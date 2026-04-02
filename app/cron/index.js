@@ -240,7 +240,8 @@ class Cron {
                 num5_desc: null,
                 num6_desc: null,
                 num7_desc: null,
-                calculate_status: 1
+                calculate_status: 1,
+                remark: '系统自动生成',
             }
 
             const orderedZodiacs = this.zodiacHelper.orderedZodiac();
