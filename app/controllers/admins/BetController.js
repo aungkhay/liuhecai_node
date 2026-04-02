@@ -9,6 +9,7 @@ class Controller {
         this.commonHelper = new CommonHelper();
         this.ResCode = this.commonHelper.ResCode;
         this.getOffset = this.commonHelper.getOffset;
+        this.adminLogger = this.commonHelper.adminLogger;
     }
 
     GET_CATEGORY_LIST = async (req, res) => {
@@ -83,6 +84,9 @@ class Controller {
             }));
 
             await Bet.bulkCreate(newBets);
+
+            // LOG
+            await this.adminLogger(req, 'Bet', 'create');
 
             return MyResponse(res, this.ResCode.SUCCESS.code, true, this.ResCode.SUCCESS.msg, {});
         } catch (error) {
