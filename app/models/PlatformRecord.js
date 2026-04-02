@@ -98,6 +98,10 @@ PlatformRecord.init({
             key: 'id'
         },
         defaultValue: null
+    },
+    remark: {
+        type: DataTypes.STRING,
+        allowNull: true,
     }
 }, {
     sequelize,

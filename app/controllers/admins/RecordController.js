@@ -166,6 +166,9 @@ class Controller {
                         admin_id: req.user_id,
                         ... req.body
                     }
+                    if (lottery_type === 'platform') {
+                        obj.remark = '后台创建';
+                    }
                     await Model.create(obj, { transaction: t });
                     if (resultGuess) {
                         await resultGuess.update({ result_match: result_match, result_number: req.body.num7, zodiac_name: zodiacName[0] }, { transaction: t });
