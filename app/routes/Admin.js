@@ -24,7 +24,7 @@ class AdminRoute extends express.Router {
         const ConfigController = require('../controllers/admins/ConfigController');
         const configCtrl = new ConfigController(app);
         this.get('/configs', middleware.isLoggedIn('config-list'), configCtrl.INDEX);
-        this.get('/current-year', middleware.isLoggedIn('config-list'), configCtrl.GET_YEAR);
+        // this.get('/current-year', middleware.isLoggedIn('config-list'), configCtrl.GET_YEAR);
         this.get('/configs/xiao-ma', middleware.isLoggedIn('config-list'), configCtrl.XIAO_MA);
         this.post('/configs/update-qi-xiao', FormValidator.update_qi_xiaos(), middleware.isLoggedIn('config-update'), configCtrl.UPDATE_XIAO);
         this.post('/configs/update-wu-xiao', FormValidator.update_wu_xiaos(), middleware.isLoggedIn('config-update'), configCtrl.UPDATE_XIAO);

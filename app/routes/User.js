@@ -6,7 +6,7 @@ class UserRoute extends express.Router {
 
         const MainController = require('../controllers/users/MainController');
         const mainCtrl = new MainController(app);
-        this.get('/current-year', mainCtrl.GET_YEAR);
+        // this.get('/current-year', mainCtrl.GET_YEAR);
         this.get('/banners', mainCtrl.GET_BANNER);
         this.get('/lottery-record/last', mainCtrl.LAST_RECORD);
         this.get('/lottery-record/history', mainCtrl.RECORD_HISTORY);
