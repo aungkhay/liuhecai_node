@@ -13,6 +13,16 @@ class Controller {
         this.ResCode = this.commonHelper.ResCode;
     }
 
+    GET_SERVER_TIME = async (req, res) => {
+        try {
+            const now = new Date();
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', { server_time: now.getTime() });
+        } catch (error) {
+            console.error(error);
+            return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+        }
+    }
+
     GET_YEAR = async (req, res) => {
         try {
             const year = await this.redisHelper.getValue('current_year');
@@ -217,6 +227,37 @@ class Controller {
             return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
         }
     }
+
+    NEXT_BATCH_NUMBER = async (req, res) => {
+        try {
+            const record = await PlatformRecord.findOne({
+                order: [['draw_date', 'DESC']],
+            });
+            // batch number format: 26001
+            // 26 -> year, 001 -> batch number
+            const now = new Date();
+            const year = now.getFullYear();
+            let current_year = year;
+            let next_batch_number = `${current_year % 100}000`;
+            if (record) {
+                // Check if the last record's batch number is from the current year
+                const recordYear = Math.floor(Number(record.batch_number) / 1000);
+                if (recordYear === current_year % 100) {
+                    next_batch_number = Number(record.batch_number) + 1;
+                } else {
+                    next_batch_number = `${current_year % 100}000`;
+                }
+            }
+            const data = {
+                next_batch_number: Number(next_batch_number),
+            }
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', data);
+        } catch (error) {
+            console.error(error);
+            return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+        }
+    }
+
 }
 
 module.exports = Controller;

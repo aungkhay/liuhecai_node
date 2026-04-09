@@ -216,7 +216,7 @@ class Cron {
             });
             if (!bets || bets.length === 0) {
                 console.log('[Cron] No bets found');
-                return;
+                // return;
             }
 
             let totalWinAmount = 0;
@@ -234,7 +234,7 @@ class Cron {
                 } else {
                     console.log('[Cron] Max attempts reached. Unable to achieve desired profit/loss percentage.');
                     this.current_attempts = 0;
-                    return;
+                    // return;
                 }
             }
             this.current_attempts = 0;
