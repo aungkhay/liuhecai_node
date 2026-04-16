@@ -37,8 +37,8 @@ class Cron {
         cron.schedule('45 21 * * *', () => this.GET_HK_HISTORY(1)).start();
         // Run every minute
         cron.schedule('* * * * *', this.CALCULATE_BET).start();
-        // Run 8:32 PM every day
-        cron.schedule('32 20 * * *', this.CREATE_BET_RESULT).start();
+        // Run 8:32:30 PM every day
+        cron.schedule('30 32 20 * * *', this.CREATE_BET_RESULT).start();
     }
 
     GET_AM_HISTORY = async (rows = 2000) => {
