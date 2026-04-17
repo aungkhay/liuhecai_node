@@ -21,11 +21,12 @@ class Controller {
             const year = now.getFullYear();
             let current_year = year;
 
+            const record = await PlatformRecord.findOne({
+                order: [['id', 'DESC']],
+            });
+
             let last_batch_number = `${current_year % 100}000`;
             if (!range) {
-                const record = await PlatformRecord.findOne({
-                    order: [['id', 'DESC']],
-                });
                 if (record) {
                     // Check if the last record's batch number is from the current year
                     const recordYear = Math.floor(Number(record.batch_number) / 1000);
@@ -39,7 +40,16 @@ class Controller {
                 // check if the last range's batch_end is from the current year
                 const rangeYear = Math.floor(Number(range.batch_end) / 1000);
                 if (rangeYear === current_year % 100) {
-                    last_batch_number = Number(range.batch_end);
+                    if (record) {
+                        // Check if the last record's batch number is greater than the last range's batch_end
+                        if (Number(record.batch_number) > Number(range.batch_end)) {
+                            last_batch_number = Number(record.batch_number);
+                        } else {                            
+                            last_batch_number = Number(range.batch_end);
+                        }
+                    } else {
+                        last_batch_number = Number(range.batch_end);
+                    }
                 } else {
                     last_batch_number = `${current_year % 100}000`;
                 }
@@ -106,12 +116,12 @@ class Controller {
                 attributes: ['batch_number'],
                 order: [['id', 'DESC']],
             });
-            if (lastPlatformRecord && lastRecord && lastPlatformRecord.batch_number != lastRecord.batch_end) {
-                const end = String(lastRecord.batch_end).padStart(3, '0');
-                return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, `${end}期未完成`, {});
-            }
+            // if (lastPlatformRecord && lastRecord && lastPlatformRecord.batch_number != lastRecord.batch_end) {
+            //     const end = String(lastRecord.batch_end).padStart(3, '0');
+            //     return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, `${end}期未完成`, {});
+            // }
             if (lastRecord && lastRecord.is_finished === 0) {
-                return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, `上一次范围未完成`, {});
+                return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, `最后一期未完成`, {});
             }
 
             const record = await TouZiPingTe.create({
