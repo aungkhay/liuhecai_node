@@ -13,7 +13,25 @@ module.exports = async () => {
             name: "Super Admin",
             phone_number: '13914725800',
             password: encrypt(PASS_PREFIX + 'superadmin@123' + PASS_SUFFIX, PASS_KEY, PASS_IV),
-        }
+        },
+        {
+            type: 1,
+            name: "Developer",
+            phone_number: '13914725801',
+            password: encrypt(PASS_PREFIX + 'developer@123' + PASS_SUFFIX, PASS_KEY, PASS_IV),
+        },
+        {
+            type: 1,
+            name: "Admin 1",
+            phone_number: '13914725802',
+            password: encrypt(PASS_PREFIX + 'admin1@123' + PASS_SUFFIX, PASS_KEY, PASS_IV),
+        },
+        {
+            type: 1,
+            name: "Admin 2",
+            phone_number: '13914725803',
+            password: encrypt(PASS_PREFIX + 'admin2@123' + PASS_SUFFIX, PASS_KEY, PASS_IV),
+        },
     ];
 
     const count = await User.count();

@@ -116,7 +116,7 @@ class Controller {
 
     RECORD_HISTORY = async (req, res) => {
         try {
-            const page = parseInt(req.query.page || 1);
+            let page = parseInt(req.query.page || 1);
             const perPage = parseInt(req.query.perPage || 10);
             const offset = this.commonHelper.getOffset(page, perPage);
 
@@ -132,6 +132,7 @@ class Controller {
                 Model = AomenRecord;
             } else if (lottery_type === 'platform') {
                 Model = PlatformRecord;
+                page = 1; // platform record does not support pagination
             }
 
             const { count, rows } = await Model.findAndCountAll({
@@ -145,14 +146,24 @@ class Controller {
                 order: [['draw_date', 'DESC']],
             });
 
+            let meta = {
+                page: page,
+                perPage: perPage,
+                totalPage: count > 0 ? Math.ceil(count / perPage) : count,
+                total: count
+            }
+            if (lottery_type === 'platform') {
+                meta = {
+                    page: 1,
+                    perPage: 10,
+                    totalPage: 1,
+                    total: 10
+                }
+            }
+
             const data = {
                 records: rows,
-                meta: {
-                    page: page,
-                    perPage: perPage,
-                    totalPage: count > 0 ? Math.ceil(count / perPage) : count,
-                    total: count
-                }
+                meta: meta
             }
 
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', data);
