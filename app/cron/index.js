@@ -163,7 +163,7 @@ class Cron {
             });
             // check already have created record for today
             if (lastRecord) {
-                const lastRecordDate = moment(lastRecord.createdAt).format('YYYY-MM-DD');
+                const lastRecordDate = moment(lastRecord.draw_date).format('YYYY-MM-DD');
                 const today = moment().format('YYYY-MM-DD');
                 if (lastRecordDate === today) {
                     console.log('[Cron] Bet result for today already created.');
