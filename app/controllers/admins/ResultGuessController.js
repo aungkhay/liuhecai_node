@@ -104,8 +104,11 @@ class Controller {
     DELETE = async (req, res) => {
         try {
             const resultGuess = await ResultGuess.findByPk(req.params.id, { attributes: ['id', 'result_match'] });
-            if (!resultGuess || resultGuess.result_match != 0) {
+            if (!resultGuess) {
                 return MyResponse(res, this.ResCode.NOT_FOUND.code, false, '未找到信息', {});
+            }
+            if (resultGuess.result_match != 0) {
+                return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '已开奖的结果竞猜无法删除', {});
             }
             await resultGuess.destroy();
 
