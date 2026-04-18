@@ -112,6 +112,9 @@ PlatformRecord.init({
         {
             name: 'idx_draw_date',
             fields: ['draw_date'],
+        },
+        {
+            fields: ['batch_number'],
         }
     ],
 })

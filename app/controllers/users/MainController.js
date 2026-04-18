@@ -143,7 +143,7 @@ class Controller {
                 },
                 offset: offset,
                 limit: perPage,
-                order: [['draw_date', 'DESC']],
+                order: [['batch_number', 'DESC']],
             });
 
             let meta = {
