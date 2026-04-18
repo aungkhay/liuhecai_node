@@ -50,11 +50,8 @@ class Controller {
                 return MyResponse(res, this.ResCode.VALIDATE_FAIL.code, false, this.ResCode.VALIDATE_FAIL.msg, {}, errors);
             }
 
-            let year = await this.redisHelper.getValue('current_year');
-            if (!year) {
-                const conf = await Config.findOne({ where: { type: 'current_year' }, attributes: ['val'] });
-                year = conf.val;
-            }
+            const conf = await Config.findOne({ where: { type: 'current_year' }, attributes: ['val'] });
+            const year = conf.val;
 
             const lastRecord = await DoubleColor.findOne({
                 where: { 
