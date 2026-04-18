@@ -163,6 +163,7 @@ class Controller {
 
                 // Double Color
                 const doubleColor = await DoubleColor.findOne({ where: { year: req.body.year, batch_number: req.body.batch_number } });
+                // console.log('doubleColor', doubleColor)
 
                 const t = await db.transaction();
                 try {
