@@ -159,12 +159,13 @@ class Cron {
         try {
 
             const lastRecord = await PlatformRecord.findOne({
-                order: [['draw_date', 'DESC']]
+                order: [['batch_number', 'DESC']]
             });
             // check already have created record for today
             if (lastRecord) {
                 const lastRecordDate = moment(lastRecord.draw_date).format('YYYY-MM-DD');
                 const today = moment().format('YYYY-MM-DD');
+                console.log(lastRecord, today)
                 if (lastRecordDate === today) {
                     console.log('[Cron] Bet result for today already created.');
                     return;
