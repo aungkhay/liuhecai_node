@@ -80,7 +80,7 @@ class Controller {
                 include: include,
                 offset: offset,
                 limit: perPage,
-                order: [['draw_date', 'DESC']],
+                order: [['batch_number', 'DESC']],
             });
 
             const data = {
