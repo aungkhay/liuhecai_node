@@ -168,3 +168,9 @@ exports.change_password = () => {
         check('new_password', { msg: '新密码不能为空' }).not().isEmpty(),
     ]
 }
+
+exports.create_reference_image = () => {
+    return [
+        check('image_url', { msg: '图片URL不能为空' }).not().isEmpty(),
+    ]
+}

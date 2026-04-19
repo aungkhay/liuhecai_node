@@ -45,6 +45,11 @@
     { "model": "参考链接管理", "title": "更新", "name": "reference-link-update" },
     { "model": "参考链接管理", "title": "删除", "name": "reference-link-delete" },
 
+    { "model": "参考图片管理", "title": "列表", "name": "reference-image-list" },
+    { "model": "参考图片管理", "title": "创建", "name": "reference-image-create" },
+    { "model": "参考图片管理", "title": "更新", "name": "reference-image-update" },
+    { "model": "参考图片管理", "title": "删除", "name": "reference-image-delete" },
+
     { "model": "投注管理", "title": "列表", "name": "bet-list" },
     { "model": "投注管理", "title": "执行投注", "name": "bet-do-bet" },
     { "model": "投注管理", "title": "投注历史", "name": "bet-history" },

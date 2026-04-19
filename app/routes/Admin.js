@@ -119,6 +119,15 @@ class AdminRoute extends express.Router {
         const AdminLogController = require('../controllers/admins/LogController');
         const logCtrl = new AdminLogController(app);
         this.get('/logs', middleware.isLoggedIn('log-list'), logCtrl.INDEX);
+
+        // Reference Image Routes
+        const ReferenceImageController = require('../controllers/admins/ReferenceImageController');
+        const referenceImageCtrl = new ReferenceImageController(app);
+        this.get('/reference-images', middleware.isLoggedIn('reference-image-list'), referenceImageCtrl.INDEX);
+        this.post('/reference-images/upload', middleware.isLoggedIn('reference-image-create'), referenceImageCtrl.UPLOAD);
+        this.post('/reference-images/create', FormValidator.create_reference_image(), middleware.isLoggedIn('reference-image-create'), referenceImageCtrl.CREATE);
+        this.post('/reference-images/:id/update', FormValidator.create_reference_image(), middleware.isLoggedIn('reference-image-update'), referenceImageCtrl.UPDATE);
+        this.post('/reference-images/:id/delete', middleware.isLoggedIn('reference-image-delete'), referenceImageCtrl.DELETE);
     }
 }
 

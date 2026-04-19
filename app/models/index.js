@@ -4,6 +4,7 @@ const Role = require('./Role');
 const Permission = require('./Permission');
 const Banner = require('./Banner');
 const ReferenceLink = require('./ReferenceLink');
+const ReferenceImage = require('./ReferenceImage');
 const Config = require('./Config');
 const User = require('./User');
 const AdminLog = require('./AdminLog');
@@ -64,6 +65,7 @@ const models = {
     Permission,
     Banner,
     ReferenceLink,
+    ReferenceImage,
     Config,
     User,
     AdminLog,
