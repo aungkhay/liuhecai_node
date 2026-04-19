@@ -2,7 +2,7 @@ const ZodiacHelper = require('../../helpers/ZodiacHelper');
 const CommonHelper = require('../../helpers/CommonHelper');
 const RedisHelper = require('../../helpers/RedisHelper');
 const MyResponse = require('../../helpers/MyResponse');
-const { Banner, AomenRecord, HongKongRecord, PlatformRecord, Config, ResultGuess, TouZiPingTe, DoubleColor, ReferenceLink } = require('../../models');
+const { Banner, AomenRecord, HongKongRecord, PlatformRecord, Config, ResultGuess, TouZiPingTe, DoubleColor, ReferenceLink, ReferenceImage } = require('../../models');
 const { Op } = require('sequelize');
 
 class Controller {
@@ -263,6 +263,20 @@ class Controller {
                 next_batch_number: Number(next_batch_number),
             }
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', data);
+        } catch (error) {
+            console.error(error);
+            return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+        }
+    }
+
+    REFERENCE_IMAGES = async (req, res) => {
+        try {
+            const images = await ReferenceImage.findAll({
+                order: [['createdAt', 'DESC']],
+                limit: 100
+            });
+            
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, this.ResCode.SUCCESS.msg, images);
         } catch (error) {
             console.error(error);
             return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});

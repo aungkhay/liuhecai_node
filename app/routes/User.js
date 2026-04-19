@@ -17,6 +17,7 @@ class UserRoute extends express.Router {
         this.get('/double-color', mainCtrl.GET_DOUBLE_COLOR);
         this.get('/reference-links', mainCtrl.GET_REFERENCE_LINKS);
         this.get('/platform-next-batch-number', mainCtrl.NEXT_BATCH_NUMBER);
+        this.get('/reference-images', mainCtrl.REFERENCE_IMAGES);
     }
 }
 
