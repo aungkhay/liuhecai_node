@@ -128,6 +128,14 @@ class AdminRoute extends express.Router {
         this.post('/reference-images/create', FormValidator.create_reference_image(), middleware.isLoggedIn('reference-image-create'), referenceImageCtrl.CREATE);
         this.post('/reference-images/:id/update', FormValidator.create_reference_image(), middleware.isLoggedIn('reference-image-update'), referenceImageCtrl.UPDATE);
         this.post('/reference-images/:id/delete', middleware.isLoggedIn('reference-image-delete'), referenceImageCtrl.DELETE);
+
+        // Zodiac Feed Routes
+        const ZodiacFeedController = require('../controllers/admins/ZodiacFeedController');
+        const zodiacFeedCtrl = new ZodiacFeedController(app);
+        this.get('/zodiac-feeds', middleware.isLoggedIn('zodiac-feed-list'), zodiacFeedCtrl.INDEX);
+        this.post('/zodiac-feeds/create', FormValidator.create_zodiac_feed(), middleware.isLoggedIn('zodiac-feed-create'), zodiacFeedCtrl.CREATE);
+        this.post('/zodiac-feeds/:id/update', FormValidator.create_zodiac_feed(), middleware.isLoggedIn('zodiac-feed-update'), zodiacFeedCtrl.UPDATE);
+        this.post('/zodiac-feeds/:id/delete', middleware.isLoggedIn('zodiac-feed-delete'), zodiacFeedCtrl.DELETE);
     }
 }
 

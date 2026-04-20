@@ -4,7 +4,7 @@ const ZodiacHelper = require('../helpers/ZodiacHelper');
 const RedisHelper = require('../helpers/RedisHelper');
 const BetRuleHelper = require('../helpers/BetRuleHelper');
 const BetCalculator = require('../helpers/BetCalculator');
-const { HongKongRecord, AomenRecord, PlatformRecord, BetCategory, Bet, ResultGuess, TouZiPingTe, DoubleColor, db } = require('../models');
+const { HongKongRecord, AomenRecord, PlatformRecord, BetCategory, Bet, ResultGuess, TouZiPingTe, DoubleColor, db, ZodiacFeed } = require('../models');
 const moment = require('moment');
 const { errLogger } = require('../helpers/Logger');
 
@@ -302,7 +302,8 @@ class Cron {
                     zodiacNameArr.push(zName[0]);
                 }
             }
-            const doubleColor = await DoubleColor.findOne({ where: { year: current_year, batch_number: batch_number } });
+            const doubleColor = await DoubleColor.findOne({ where: { batch_number: batch_number } });
+            const zodiacFeed = await ZodiacFeed.findOne({ where: { batch_number: batch_number } });
 
             const t = await db.transaction();
             try {
@@ -319,6 +320,9 @@ class Cron {
                 }
                 if (doubleColor) {
                     await doubleColor.update({ result_number: obj.num7, zodiac_name: obj.num7_desc.split('/')[0], match_color: obj.num7_desc.split('/')[2]  }, { transaction: t });
+                }
+                if (zodiacFeed) {
+                    await zodiacFeed.update({ result_number: obj.num7, result_zodiac_name: obj.num7_desc.split('/')[0] }, { transaction: t });
                 }
 
                 await this.redisHelper.setValue(`CALCULATE_BET_RESULTS`, JSON.stringify({ id: record.id, status: 0 }));

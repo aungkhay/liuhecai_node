@@ -50,6 +50,11 @@
     { "model": "参考图片管理", "title": "更新", "name": "reference-image-update" },
     { "model": "参考图片管理", "title": "删除", "name": "reference-image-delete" },
 
+    { "model": "草菜肉肖", "title": "列表", "name": "zodiac-feed-list" },
+    { "model": "草菜肉肖", "title": "创建", "name": "zodiac-feed-create" },
+    { "model": "草菜肉肖", "title": "更新", "name": "zodiac-feed-update" },
+    { "model": "草菜肉肖", "title": "删除", "name": "zodiac-feed-delete" },
+
     { "model": "投注管理", "title": "列表", "name": "bet-list" },
     { "model": "投注管理", "title": "执行投注", "name": "bet-do-bet" },
     { "model": "投注管理", "title": "投注历史", "name": "bet-history" },

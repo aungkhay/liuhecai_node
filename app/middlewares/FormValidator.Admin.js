@@ -174,3 +174,11 @@ exports.create_reference_image = () => {
         check('image_url', { msg: '图片URL不能为空' }).not().isEmpty(),
     ]
 }
+
+exports.create_zodiac_feed = () => {
+    return [
+        check('batch_number', { msg: '期号不能为空' }).not().isEmpty(),
+        check('feed_one', { msg: '饲料一不能为空' }).not().isEmpty(),
+        check('feed_two', { msg: '饲料二不能为空' }).not().isEmpty(),
+    ]
+}

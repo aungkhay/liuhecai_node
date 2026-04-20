@@ -1,5 +1,5 @@
 const MyResponse = require('../../helpers/MyResponse');
-const { AomenRecord, HongKongRecord, PlatformRecord, db, ResultGuess, TouZiPingTe, DoubleColor, Bet, BetNumber, User } = require('../../models');
+const { AomenRecord, HongKongRecord, PlatformRecord, db, ResultGuess, TouZiPingTe, DoubleColor, Bet, BetNumber, User, ZodiacFeed } = require('../../models');
 const CommonHelper = require('../../helpers/CommonHelper');
 const ZodiacHelper = require('../../helpers/ZodiacHelper');
 const BetRuleHelper = require('../../helpers/BetRuleHelper');
@@ -165,6 +165,9 @@ class Controller {
                 const doubleColor = await DoubleColor.findOne({ where: { batch_number: req.body.batch_number } });
                 // console.log('doubleColor', doubleColor)
 
+                // Zodiac Feed
+                const zodiacFeed = await ZodiacFeed.findOne({ where: { batch_number: req.body.batch_number } });
+
                 const t = await db.transaction();
                 try {
                     console.log(req.body)
@@ -190,6 +193,9 @@ class Controller {
                     
                     if (doubleColor) {
                         await doubleColor.update({ result_number: req.body.num7, zodiac_name: zodiacName[0], match_color: zodiacName[2]  }, { transaction: t });
+                    }
+                    if (zodiacFeed) {
+                        await zodiacFeed.update({ result_number: req.body.num7, result_zodiac_name: zodiacName[0] }, { transaction: t });
                     }
                     await t.commit();
                 } catch (error) {
