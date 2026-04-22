@@ -4,7 +4,7 @@ const ZodiacHelper = require('../helpers/ZodiacHelper');
 const RedisHelper = require('../helpers/RedisHelper');
 const BetRuleHelper = require('../helpers/BetRuleHelper');
 const BetCalculator = require('../helpers/BetCalculator');
-const { HongKongRecord, AomenRecord, PlatformRecord, BetCategory, Bet, ResultGuess, TouZiPingTe, DoubleColor, db, ZodiacFeed, MustWin3Batch } = require('../models');
+const { HongKongRecord, AomenRecord, PlatformRecord, BetCategory, Bet, ResultGuess, TouZiPingTe, DoubleColor, db, ZodiacFeed, MustWin3Batch, TenWinSpecial } = require('../models');
 const moment = require('moment');
 const { errLogger } = require('../helpers/Logger');
 
@@ -311,6 +311,8 @@ class Cron {
                     is_finished: 0
                 }
             });
+            // TenWinSpecial
+            const tenWinSpecial = await TenWinSpecial.findOne({ where: { batch_number: batch_number } });
 
             const t = await db.transaction();
             try {
@@ -355,6 +357,14 @@ class Cron {
                             updateData.is_finished = 1;
                         }
                         await mustWin3Batch.update(updateData, { transaction: t });
+                    }
+                }
+                if (tenWinSpecial) {
+                    const numbers = tenWinSpecial.numbers.split('-').map(num => parseInt(num));
+                    if (!numbers.includes(obj.num7)) {
+                        await tenWinSpecial.update({ result_number: obj.num7, zodiac_name: obj.num7_desc.split('/')[0], is_matched: 0 }, { transaction: t });
+                    } else {
+                        await tenWinSpecial.update({ result_number: obj.num7, zodiac_name: obj.num7_desc.split('/')[0], is_matched: 1 }, { transaction: t });
                     }
                 }
 

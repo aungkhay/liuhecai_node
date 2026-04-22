@@ -60,6 +60,11 @@
     { "model": "三期必中", "title": "更新", "name": "must-win-3-batch-update" },
     { "model": "三期必中", "title": "删除", "name": "must-win-3-batch-delete" },
 
+    { "model": "十码必中特", "title": "列表", "name": "ten-win-special-list" },
+    { "model": "十码必中特", "title": "创建", "name": "ten-win-special-create" },
+    { "model": "十码必中特", "title": "更新", "name": "ten-win-special-update" },
+    { "model": "十码必中特", "title": "删除", "name": "ten-win-special-delete" },
+
     { "model": "投注管理", "title": "列表", "name": "bet-list" },
     { "model": "投注管理", "title": "执行投注", "name": "bet-do-bet" },
     { "model": "投注管理", "title": "投注历史", "name": "bet-history" },

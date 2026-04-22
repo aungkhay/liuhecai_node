@@ -1,5 +1,5 @@
 const MyResponse = require('../../helpers/MyResponse');
-const { AomenRecord, HongKongRecord, PlatformRecord, db, ResultGuess, TouZiPingTe, DoubleColor, Bet, BetNumber, User, ZodiacFeed, MustWin3Batch } = require('../../models');
+const { AomenRecord, HongKongRecord, PlatformRecord, db, ResultGuess, TouZiPingTe, DoubleColor, Bet, BetNumber, User, ZodiacFeed, MustWin3Batch, TenWinSpecial } = require('../../models');
 const CommonHelper = require('../../helpers/CommonHelper');
 const ZodiacHelper = require('../../helpers/ZodiacHelper');
 const BetRuleHelper = require('../../helpers/BetRuleHelper');
@@ -178,6 +178,9 @@ class Controller {
                     }
                 });
 
+                // TenWinSpecial
+                const tenWinSpecial = await TenWinSpecial.findOne({ where: { batch_number: req.body.batch_number } });
+
                 const t = await db.transaction();
                 try {
                     console.log(req.body)
@@ -231,6 +234,14 @@ class Controller {
                                 updateData.is_finished = 1;
                             }
                             await mustWin3Batch.update(updateData, { transaction: t });
+                        }
+                    }
+                    if (tenWinSpecial) {
+                        const numbers = tenWinSpecial.numbers.split('-').map(num => parseInt(num));
+                        if (!numbers.includes(req.body.num7)) {
+                            await tenWinSpecial.update({ result_number: req.body.num7, zodiac_name: zodiacName[0], is_matched: 0 }, { transaction: t });
+                        } else {
+                            await tenWinSpecial.update({ result_number: req.body.num7, zodiac_name: zodiacName[0], is_matched: 1 }, { transaction: t });
                         }
                     }
                     await t.commit();

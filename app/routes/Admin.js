@@ -145,6 +145,14 @@ class AdminRoute extends express.Router {
         this.post('/must-win-3-batch/create', FormValidator.create_must_win_3_batch(), middleware.isLoggedIn('must-win-3-batch-create'), mustWin3BatchCtrl.CREATE);
         this.post('/must-win-3-batch/:id/update', FormValidator.create_must_win_3_batch(), middleware.isLoggedIn('must-win-3-batch-update'), mustWin3BatchCtrl.UPDATE);
         this.post('/must-win-3-batch/:id/delete', middleware.isLoggedIn('must-win-3-batch-delete'), mustWin3BatchCtrl.DELETE);
+
+        // Ten Win Special Routes
+        const TenWinSpecialController = require('../controllers/admins/TenWinSpecialController');
+        const tenWinSpecialCtrl = new TenWinSpecialController(app);
+        this.get('/ten-win-special/list', middleware.isLoggedIn('ten-win-special-list'), tenWinSpecialCtrl.INDEX);
+        this.post('/ten-win-special/create', FormValidator.create_ten_win_special(), middleware.isLoggedIn('ten-win-special-create'), tenWinSpecialCtrl.CREATE);
+        this.post('/ten-win-special/:id/update', FormValidator.create_ten_win_special(), middleware.isLoggedIn('ten-win-special-update'), tenWinSpecialCtrl.UPDATE);
+        this.post('/ten-win-special/:id/delete', middleware.isLoggedIn('ten-win-special-delete'), tenWinSpecialCtrl.DELETE);
     }
 }
 

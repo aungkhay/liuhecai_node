@@ -193,3 +193,10 @@ exports.create_must_win_3_batch = () => {
         check('zodiac_three', { msg: '第三生肖不能为空' }).not().isEmpty(),
     ]
 }
+
+exports.create_ten_win_special = () => {
+    return [
+        check('batch_number', { msg: '期号不能为空' }).not().isEmpty(),
+        check('numbers', { msg: '号码列表不能为空' }).isArray({ min: 10 }).withMessage('号码列表必须包含10个号码'),
+    ]
+}
