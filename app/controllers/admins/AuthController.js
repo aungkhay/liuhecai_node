@@ -48,7 +48,7 @@ class Controller {
                 return MyResponse(res, this.ResCode.VALIDATE_FAIL.code, false, 'Validate Failed', {}, [recaptchaError]);
             }
 
-            const user = await User.findOne({ where: { phone_number: phone }, attributes: ['id', 'password', 'status'] });
+            const user = await User.findOne({ where: { phone_number: phone }, attributes: ['id', 'password', 'status', 'relation'] });
             if (!user) {
                 await this.redisHelper.deleteKey(uuid);
                 return MyResponse(res, this.ResCode.NOT_FOUND.code, false, '未找到账号', {});
@@ -70,6 +70,7 @@ class Controller {
             const toEncrypt = JSON.stringify({
                 id: user.id,
                 phone: phone,
+                relation: user.relation
             });
             const token = encrypt(tokenPrefix + toEncrypt + tokenSuffix, TOKEN_KEY, TOKEN_IV);
             await this.redisHelper.setValue(`admin_token_${user.id}`, token, 24 * 60 * 60);
