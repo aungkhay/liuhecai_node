@@ -20,6 +20,7 @@ class UserRoute extends express.Router {
         this.get('/reference-images', mainCtrl.REFERENCE_IMAGES);
         this.get('/zodiac-feed', mainCtrl.ZODIAC_FEED);
         this.get('/must-win-3-batches', mainCtrl.MUST_WIN_3_BATCH);
+        this.get('/ten-win-special', mainCtrl.TEN_WIN_SPECIAL);
     }
 }
 

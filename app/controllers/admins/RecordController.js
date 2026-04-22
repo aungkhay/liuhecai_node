@@ -239,9 +239,9 @@ class Controller {
                     if (tenWinSpecial) {
                         const numbers = tenWinSpecial.numbers.split('-').map(num => parseInt(num));
                         if (!numbers.includes(req.body.num7)) {
-                            await tenWinSpecial.update({ result_number: req.body.num7, zodiac_name: zodiacName[0], is_matched: 0 }, { transaction: t });
+                            await tenWinSpecial.update({ result_number: req.body.num7, result_zodiac: zodiacName[0], is_matched: 0 }, { transaction: t });
                         } else {
-                            await tenWinSpecial.update({ result_number: req.body.num7, zodiac_name: zodiacName[0], is_matched: 1 }, { transaction: t });
+                            await tenWinSpecial.update({ result_number: req.body.num7, result_zodiac: zodiacName[0], is_matched: 1 }, { transaction: t });
                         }
                     }
                     await t.commit();

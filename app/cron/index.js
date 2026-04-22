@@ -362,9 +362,9 @@ class Cron {
                 if (tenWinSpecial) {
                     const numbers = tenWinSpecial.numbers.split('-').map(num => parseInt(num));
                     if (!numbers.includes(obj.num7)) {
-                        await tenWinSpecial.update({ result_number: obj.num7, zodiac_name: obj.num7_desc.split('/')[0], is_matched: 0 }, { transaction: t });
+                        await tenWinSpecial.update({ result_number: obj.num7, result_zodiac: obj.num7_desc.split('/')[0], is_matched: 0 }, { transaction: t });
                     } else {
-                        await tenWinSpecial.update({ result_number: obj.num7, zodiac_name: obj.num7_desc.split('/')[0], is_matched: 1 }, { transaction: t });
+                        await tenWinSpecial.update({ result_number: obj.num7, result_zodiac: obj.num7_desc.split('/')[0], is_matched: 1 }, { transaction: t });
                     }
                 }
 
