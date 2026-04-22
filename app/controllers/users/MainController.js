@@ -178,7 +178,7 @@ class Controller {
         try {
             const results = await ResultGuess.findAll({
                 order: [['id', 'DESC']],
-                limit: 6
+                limit: 10
             });
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', results);
         } catch (error) {
@@ -217,7 +217,7 @@ class Controller {
         try {
             const records = await DoubleColor.findAll({
                 order: [['id', 'DESC']],
-                limit: 7
+                limit: 10
             });
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', records);
         } catch (error) {
