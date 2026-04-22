@@ -86,6 +86,9 @@ class Controller {
             if (!record) {
                 return MyResponse(res, this.ResCode.NOT_FOUND.code, false, '记录未找到', {});
             }
+            if (record.result_number) {
+                return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '已开奖的记录无法修改', {});
+            }
 
             await record.update(req.body);
 
@@ -104,6 +107,9 @@ class Controller {
             const record = await ZodiacFeed.findByPk(id);
             if (!record) {
                 return MyResponse(res, this.ResCode.NOT_FOUND.code, false, '记录未找到', {});
+            }
+            if (record.result_number) {
+                return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '已开奖的记录无法删除', {});
             }
 
             await record.destroy();
