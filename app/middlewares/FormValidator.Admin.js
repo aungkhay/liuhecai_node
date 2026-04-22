@@ -182,3 +182,14 @@ exports.create_zodiac_feed = () => {
         check('feed_two', { msg: '饲料二不能为空' }).not().isEmpty(),
     ]
 }
+
+exports.create_must_win_3_batch = () => {
+    return [
+        check('batch_one', { msg: '第一期数不能为空' }).not().isEmpty(),
+        check('batch_two', { msg: '第二期数不能为空' }).not().isEmpty(),
+        check('batch_three', { msg: '第三期数不能为空' }).not().isEmpty(),
+        check('zodiac_one', { msg: '第一生肖不能为空' }).not().isEmpty(),
+        check('zodiac_two', { msg: '第二生肖不能为空' }).not().isEmpty(),
+        check('zodiac_three', { msg: '第三生肖不能为空' }).not().isEmpty(),
+    ]
+}

@@ -20,6 +20,7 @@ const BetItem = require('./BetItem');
 const BetNumber = require('./BetNumber');
 const Bet = require('./Bet');
 const ZodiacFeed = require('./ZodiacFeed');
+const MustWin3Batch = require('./MustWin3Batch');
 
 // ========== Role ↔️ Permission ========== 
 Role.belongsToMany(Permission, { as: 'permissions', through: 'role_has_permissions', foreignKey: 'RoleId' });
@@ -81,7 +82,8 @@ const models = {
     BetItem,
     BetNumber,
     Bet,
-    ZodiacFeed
+    ZodiacFeed,
+    MustWin3Batch
 };
 
 // Export models + db connection

@@ -136,6 +136,15 @@ class AdminRoute extends express.Router {
         this.post('/zodiac-feeds/create', FormValidator.create_zodiac_feed(), middleware.isLoggedIn('zodiac-feed-create'), zodiacFeedCtrl.CREATE);
         this.post('/zodiac-feeds/:id/update', FormValidator.create_zodiac_feed(), middleware.isLoggedIn('zodiac-feed-update'), zodiacFeedCtrl.UPDATE);
         this.post('/zodiac-feeds/:id/delete', middleware.isLoggedIn('zodiac-feed-delete'), zodiacFeedCtrl.DELETE);
+
+        // Must Win 3 Batch Routes
+        const MustWin3BatchController = require('../controllers/admins/MustWin2BatchController');
+        const mustWin3BatchCtrl = new MustWin3BatchController(app);
+        this.get('/must-win-3-batch/last-batch-number', middleware.isLoggedIn(), mustWin3BatchCtrl.LAST_BATCH_NUMBER);
+        this.get('/must-win-3-batch/list', middleware.isLoggedIn('must-win-3-batch-list'), mustWin3BatchCtrl.INDEX);
+        this.post('/must-win-3-batch/create', FormValidator.create_must_win_3_batch(), middleware.isLoggedIn('must-win-3-batch-create'), mustWin3BatchCtrl.CREATE);
+        this.post('/must-win-3-batch/:id/update', FormValidator.create_must_win_3_batch(), middleware.isLoggedIn('must-win-3-batch-update'), mustWin3BatchCtrl.UPDATE);
+        this.post('/must-win-3-batch/:id/delete', middleware.isLoggedIn('must-win-3-batch-delete'), mustWin3BatchCtrl.DELETE);
     }
 }
 

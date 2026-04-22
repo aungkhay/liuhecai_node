@@ -1,11 +1,12 @@
 const MyResponse = require('../../helpers/MyResponse');
-const { AomenRecord, HongKongRecord, PlatformRecord, db, ResultGuess, TouZiPingTe, DoubleColor, Bet, BetNumber, User, ZodiacFeed } = require('../../models');
+const { AomenRecord, HongKongRecord, PlatformRecord, db, ResultGuess, TouZiPingTe, DoubleColor, Bet, BetNumber, User, ZodiacFeed, MustWin3Batch } = require('../../models');
 const CommonHelper = require('../../helpers/CommonHelper');
 const ZodiacHelper = require('../../helpers/ZodiacHelper');
 const BetRuleHelper = require('../../helpers/BetRuleHelper');
 const RedisHelper = require('../../helpers/RedisHelper');
 let { validationResult } = require('express-validator');
 const { Op, literal, Sequelize  } = require('sequelize');
+const { update } = require('../../models/MustWin3Batch');
 
 class Controller {
     constructor (app) {
@@ -168,6 +169,15 @@ class Controller {
                 // Zodiac Feed
                 const zodiacFeed = await ZodiacFeed.findOne({ where: { batch_number: req.body.batch_number } });
 
+                // Must Win 3 Batch
+                const mustWin3Batch = await MustWin3Batch.findOne({
+                    where: {
+                        batch_one: { [Op.lte]: batch_number },
+                        batch_three: { [Op.gte]: batch_number },
+                        is_finished: 0
+                    }
+                });
+
                 const t = await db.transaction();
                 try {
                     console.log(req.body)
@@ -190,12 +200,38 @@ class Controller {
                             await touziPingTeRecord.update({ is_finished: 1 }, { transaction: t });
                         }
                     }
-                    
+
                     if (doubleColor) {
                         await doubleColor.update({ result_number: req.body.num7, zodiac_name: zodiacName[0], match_color: zodiacName[2]  }, { transaction: t });
                     }
                     if (zodiacFeed) {
                         await zodiacFeed.update({ result_number: req.body.num7, result_zodiac_name: zodiacName[0] }, { transaction: t });
+                    }
+                    if (mustWin3Batch) {
+                        const arr = [mustWin3Batch.batch_one, mustWin3Batch.batch_two, mustWin3Batch.batch_three];
+                        const index = arr.findIndex(batch => batch_number === batch);
+                        if (index !== -1) {
+                            const updateData = {
+                                result_number_one: mustWin3Batch.result_number_one,
+                                result_number_two: mustWin3Batch.result_number_two,
+                                result_number_three: mustWin3Batch.result_number_three,
+                            };
+                            if (index === 0) {
+                                updateData.result_number_one = req.body.num7;
+                                updateData.result_zodiac_one = zodiacName[0];
+                            } else if (index === 1) {
+                                updateData.result_number_two = req.body.num7;
+                                updateData.result_zodiac_two = zodiacName[0];
+                            } else if (index === 2) {
+                                updateData.result_number_three = req.body.num7;
+                                updateData.result_zodiac_three = zodiacName[0];
+                            }
+
+                            if (updateData.result_number_one !== 0 && updateData.result_number_two !== 0 && updateData.result_number_three !== 0) {
+                                updateData.is_finished = 1;
+                            }
+                            await mustWin3Batch.update(updateData, { transaction: t });
+                        }
                     }
                     await t.commit();
                 } catch (error) {

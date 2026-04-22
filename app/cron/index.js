@@ -4,7 +4,7 @@ const ZodiacHelper = require('../helpers/ZodiacHelper');
 const RedisHelper = require('../helpers/RedisHelper');
 const BetRuleHelper = require('../helpers/BetRuleHelper');
 const BetCalculator = require('../helpers/BetCalculator');
-const { HongKongRecord, AomenRecord, PlatformRecord, BetCategory, Bet, ResultGuess, TouZiPingTe, DoubleColor, db, ZodiacFeed } = require('../models');
+const { HongKongRecord, AomenRecord, PlatformRecord, BetCategory, Bet, ResultGuess, TouZiPingTe, DoubleColor, db, ZodiacFeed, MustWin3Batch } = require('../models');
 const moment = require('moment');
 const { errLogger } = require('../helpers/Logger');
 
@@ -304,6 +304,13 @@ class Cron {
             }
             const doubleColor = await DoubleColor.findOne({ where: { batch_number: batch_number } });
             const zodiacFeed = await ZodiacFeed.findOne({ where: { batch_number: batch_number } });
+            const mustWin3Batch = await MustWin3Batch.findOne({
+                where: {
+                    batch_one: { [Op.lte]: batch_number },
+                    batch_three: { [Op.gte]: batch_number },
+                    is_finished: 0
+                }
+            });
 
             const t = await db.transaction();
             try {
@@ -323,6 +330,32 @@ class Cron {
                 }
                 if (zodiacFeed) {
                     await zodiacFeed.update({ result_number: obj.num7, result_zodiac_name: obj.num7_desc.split('/')[0] }, { transaction: t });
+                }
+                if (mustWin3Batch) {
+                    const arr = [mustWin3Batch.batch_one, mustWin3Batch.batch_two, mustWin3Batch.batch_three];
+                    const index = arr.findIndex(batch => batch_number === batch);
+                    if (index !== -1) {
+                        const updateData = {
+                            result_number_one: mustWin3Batch.result_number_one,
+                            result_number_two: mustWin3Batch.result_number_two,
+                            result_number_three: mustWin3Batch.result_number_three,
+                        };
+                        if (index === 0) {
+                            updateData.result_number_one = obj.num7;
+                            updateData.result_zodiac_one = obj.num7_desc.split('/')[0];
+                        } else if (index === 1) {
+                            updateData.result_number_two = obj.num7;
+                            updateData.result_zodiac_two = obj.num7_desc.split('/')[0];
+                        } else if (index === 2) {
+                            updateData.result_number_three = obj.num7;
+                            updateData.result_zodiac_three = obj.num7_desc.split('/')[0];
+                        }
+
+                        if (updateData.result_number_one !== 0 && updateData.result_number_two !== 0 && updateData.result_number_three !== 0) {
+                            updateData.is_finished = 1;
+                        }
+                        await mustWin3Batch.update(updateData, { transaction: t });
+                    }
                 }
 
                 await this.redisHelper.setValue(`CALCULATE_BET_RESULTS`, JSON.stringify({ id: record.id, status: 0 }));

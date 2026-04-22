@@ -19,6 +19,7 @@ class UserRoute extends express.Router {
         this.get('/platform-next-batch-number', mainCtrl.NEXT_BATCH_NUMBER);
         this.get('/reference-images', mainCtrl.REFERENCE_IMAGES);
         this.get('/zodiac-feed', mainCtrl.ZODIAC_FEED);
+        this.get('/must-win-3-batches', mainCtrl.MUST_WIN_3_BATCH);
     }
 }
 

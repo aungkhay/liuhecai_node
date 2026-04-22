@@ -55,6 +55,11 @@
     { "model": "草菜肉肖", "title": "更新", "name": "zodiac-feed-update" },
     { "model": "草菜肉肖", "title": "删除", "name": "zodiac-feed-delete" },
 
+    { "model": "三期必中", "title": "列表", "name": "must-win-3-batch-list" },
+    { "model": "三期必中", "title": "创建", "name": "must-win-3-batch-create" },
+    { "model": "三期必中", "title": "更新", "name": "must-win-3-batch-update" },
+    { "model": "三期必中", "title": "删除", "name": "must-win-3-batch-delete" },
+
     { "model": "投注管理", "title": "列表", "name": "bet-list" },
     { "model": "投注管理", "title": "执行投注", "name": "bet-do-bet" },
     { "model": "投注管理", "title": "投注历史", "name": "bet-history" },

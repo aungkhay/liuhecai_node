@@ -2,7 +2,7 @@ const ZodiacHelper = require('../../helpers/ZodiacHelper');
 const CommonHelper = require('../../helpers/CommonHelper');
 const RedisHelper = require('../../helpers/RedisHelper');
 const MyResponse = require('../../helpers/MyResponse');
-const { Banner, AomenRecord, HongKongRecord, PlatformRecord, Config, ResultGuess, TouZiPingTe, DoubleColor, ReferenceLink, ReferenceImage, ZodiacFeed } = require('../../models');
+const { Banner, AomenRecord, HongKongRecord, PlatformRecord, Config, ResultGuess, TouZiPingTe, DoubleColor, ReferenceLink, ReferenceImage, ZodiacFeed, MustWin3Batch } = require('../../models');
 const { Op } = require('sequelize');
 
 class Controller {
@@ -290,6 +290,19 @@ class Controller {
                 limit: 20
             });
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', feeds);
+        } catch (error) {
+            console.error(error);
+            return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
+        }
+    }
+
+    MUST_WIN_3_BATCH = async (req, res) => {
+        try {
+            const batches = await MustWin3Batch.findAll({
+                order: [['id', 'ASC']],
+                limit: 5
+            });
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', batches);
         } catch (error) {
             console.error(error);
             return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
