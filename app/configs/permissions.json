@@ -69,6 +69,7 @@
     { "model": "投注管理", "title": "执行投注", "name": "bet-do-bet" },
     { "model": "投注管理", "title": "投注历史", "name": "bet-history" },
     { "model": "投注管理", "title": "投注统计", "name": "bet-summary" },
+    { "model": "投注管理", "title": "下注总结", "name": "batch-summary" },
 
     { "model": "操作日志", "title": "列表", "name": "log-list" }
 ]
