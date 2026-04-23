@@ -24,10 +24,10 @@ class Controller {
             const userId = req.user_id;
 
             let condition = {};
-            if (userId != 1) {
-                const me = await User.findByPk(userId, { attributes: ['id', 'relation'] });
-                condition.relation = { [Op.like]: `${me.relation}/%` }
-            }
+            // if (userId != 1) {
+            //     const me = await User.findByPk(userId, { attributes: ['id', 'relation'] });
+            //     condition.relation = { [Op.like]: `${me.relation}/%` }
+            // }
             if (type) {
                 condition.type = type;
             }
