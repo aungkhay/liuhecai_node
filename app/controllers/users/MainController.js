@@ -299,10 +299,12 @@ class Controller {
     MUST_WIN_3_BATCH = async (req, res) => {
         try {
             const batches = await MustWin3Batch.findAll({
-                order: [['id', 'ASC']],
+                order: [['id', 'DESC']],
                 limit: 5
             });
-            return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', batches);
+            const data = batches.reverse();
+
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', data);
         } catch (error) {
             console.error(error);
             return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
