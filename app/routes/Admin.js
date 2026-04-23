@@ -105,6 +105,7 @@ class AdminRoute extends express.Router {
         this.post('/bet/do-bet', FormValidator.do_bet(), middleware.isLoggedIn('bet-do-bet'), betCtrl.DO_BET);
         this.get('/bet/history', middleware.isLoggedIn('bet-history'), betCtrl.BET_HISTORY);
         this.get('/bet/summary', middleware.isLoggedIn('bet-summary'), betCtrl.BET_SUMMARY);
+        this.get('/batch/summary', middleware.isLoggedIn('batch-summary'), betCtrl.BATCH_SUMMARY);
 
         // Reference Link Routes
         const ReferenceLinkController = require('../controllers/admins/ReferenceLinkController');

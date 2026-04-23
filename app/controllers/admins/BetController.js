@@ -246,6 +246,42 @@ class Controller {
             return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});
         }
     }
+
+    BATCH_SUMMARY = async (req, res) => {
+        try {
+            const page = parseInt(req.query.page || 1);
+            const perPage = parseInt(req.query.perPage || 10);
+            const offset = this.getOffset(page, perPage);
+
+            const bets = await Bet.findAll({
+                attributes: [
+                    'batch_number',
+                    [fn('SUM', col('bet_amount')), 'total_bet_amount'],
+                    [fn('SUM', col('win_amount')), 'total_win_amount'],
+                ],
+                group: ['batch_number'],
+                order: [['batch_number', 'DESC']],
+                offset: offset,
+                limit: perPage,
+            });
+
+            const data = {
+                records: bets,
+                meta: {
+                    page: page,
+                    perPage: perPage,
+                    totalPage: bets.length > 0 ? Math.ceil(bets.length / perPage) : bets.length,
+                    total: bets.length
+                }
+            }
+
+            return MyResponse(res, this.ResCode.SUCCESS.code, true, this.ResCode.SUCCESS.msg, data);
+
+        } catch (error) {
+            console.error('Error in BATCH_SUMMARY:', error);
+            return MyResponse(res, this.ResCode.SERVER_ERROR.code, false, this.ResCode.SERVER_ERROR.msg, {});  
+        }
+    }
 }
 
 module.exports = Controller;
