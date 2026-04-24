@@ -7,6 +7,7 @@ const BetCalculator = require('../helpers/BetCalculator');
 const { HongKongRecord, AomenRecord, PlatformRecord, BetCategory, Bet, ResultGuess, TouZiPingTe, DoubleColor, db, ZodiacFeed, MustWin3Batch, TenWinSpecial } = require('../models');
 const moment = require('moment');
 const { errLogger } = require('../helpers/Logger');
+const { Op } = require('sequelize');
 
 class Cron {
     constructor(app) {
@@ -38,7 +39,7 @@ class Cron {
         // Run every minute
         cron.schedule('* * * * *', this.CALCULATE_BET).start();
         // Run 8:32:30 PM every day
-        cron.schedule('30 15 21 * * *', this.CREATE_BET_RESULT).start();
+        cron.schedule('15 21 * * *', this.CREATE_BET_RESULT).start();
     }
 
     GET_AM_HISTORY = async (rows = 2000) => {
