@@ -335,29 +335,36 @@ class Cron {
                     await zodiacFeed.update({ result_number: obj.num7, result_zodiac_name: obj.num7_desc.split('/')[0] }, { transaction: t });
                 }
                 if (mustWin3Batch) {
-                    const arr = [mustWin3Batch.batch_one, mustWin3Batch.batch_two, mustWin3Batch.batch_three];
-                    const index = arr.findIndex(batch => batch_number === batch);
-                    if (index !== -1) {
-                        const updateData = {
-                            result_number_one: mustWin3Batch.result_number_one,
-                            result_number_two: mustWin3Batch.result_number_two,
-                            result_number_three: mustWin3Batch.result_number_three,
-                        };
-                        if (index === 0) {
-                            updateData.result_number_one = obj.num7;
-                            updateData.result_zodiac_one = obj.num7_desc.split('/')[0];
-                        } else if (index === 1) {
-                            updateData.result_number_two = obj.num7;
-                            updateData.result_zodiac_two = obj.num7_desc.split('/')[0];
-                        } else if (index === 2) {
-                            updateData.result_number_three = obj.num7;
-                            updateData.result_zodiac_three = obj.num7_desc.split('/')[0];
-                        }
+                    const batchObj = {
+                        [mustWin3Batch.batch_one]: {
+                            number: mustWin3Batch.result_number_one,
+                            zodiac: mustWin3Batch.result_zodiac_one
+                        },
+                        [mustWin3Batch.batch_two]: {
+                            number: mustWin3Batch.result_number_two,
+                            zodiac: mustWin3Batch.result_zodiac_two
+                        },
+                        [mustWin3Batch.batch_three]: {
+                            number: mustWin3Batch.result_number_three,
+                            zodiac: mustWin3Batch.result_zodiac_three
+                        },
+                    }
+                    if (batchObj[batch_number]) {
+                        batchObj[batch_number].number = obj.num7;
+                        batchObj[batch_number].zodiac = obj.num7_desc.split('/')[0];
 
-                        if (updateData.result_number_one !== 0 && updateData.result_number_two !== 0 && updateData.result_number_three !== 0) {
-                            updateData.is_finished = 1;
-                        }
-                        await mustWin3Batch.update(updateData, { transaction: t });
+                        await mustWin3Batch.update({
+                            result_number_one: batchObj[mustWin3Batch.batch_one].number,
+                            result_zodiac_one: batchObj[mustWin3Batch.batch_one].zodiac,
+                            result_number_two: batchObj[mustWin3Batch.batch_two].number,
+                            result_zodiac_two: batchObj[mustWin3Batch.batch_two].zodiac,
+                            result_number_three: batchObj[mustWin3Batch.batch_three].number,
+                            result_zodiac_three: batchObj[mustWin3Batch.batch_three].zodiac,
+                        }, { transaction: t });
+                    }
+                    // check if all have data, change to finished
+                    if (batchObj[mustWin3Batch.batch_one].number !== 0 && batchObj[mustWin3Batch.batch_two].number !== 0 && batchObj[mustWin3Batch.batch_three].number !== 0) {
+                        await mustWin3Batch.update({ is_finished: 1 }, { transaction: t });
                     }
                 }
                 if (tenWinSpecial) {
