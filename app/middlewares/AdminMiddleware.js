@@ -29,7 +29,7 @@ class MiddleWare {
                     return MyResponse(res, this.ResCode.UNAUTHORIZED.code, false, 'UNAUTHORIZED', {});
                 }
 
-                if (user.id != 1 && user.id != 2 && permission) {
+                if (user.id != 1 && permission) {
                     const split = permission.split(',');
                     if (split.length > 1) {
                         let hasPermission = false;
