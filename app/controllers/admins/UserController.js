@@ -3,6 +3,7 @@ const MyResponse = require('../../helpers/MyResponse');
 const { User, Role } = require('../../models');
 let { validationResult } = require('express-validator');
 const { encrypt } = require('../../helpers/AESHelper');
+const RedisHelper = require('../../helpers/RedisHelper');
 
 const PASS_KEY = process.env.PASS_KEY;
 const PASS_IV = process.env.PASS_IV;
@@ -10,11 +11,12 @@ const PASS_PREFIX = process.env.PASS_PREFIX;
 const PASS_SUFFIX = process.env.PASS_SUFFIX;
 
 class Controller {
-    constructor() {
+    constructor(app) {
         this.commonHelper = new CommonHelper();
         this.ResCode = this.commonHelper.ResCode;
         this.adminLogger = this.commonHelper.adminLogger;
         this.getOffset = this.commonHelper.getOffset;
+        this.redisHelper = new RedisHelper(app);
     }
 
     INDEX = async (req, res) => {
@@ -186,6 +188,9 @@ class Controller {
             const { roleIds } = req.body;
             const roles = await Role.findAll({ where: { id: roleIds } });
             await user.setRoles(roles);
+
+            // remove permissions cache
+            await this.redisHelper.deleteKey(`admin_permissions_${userId}`);
 
             // LOG
             await this.adminLogger(req, 'User', 'assign_roles');
