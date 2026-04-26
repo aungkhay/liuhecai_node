@@ -31,7 +31,7 @@ class MiddleWare {
 
                 if (user.id != 1 && permission) {
                     const split = permission.split(',');
-                    if (split.length > 1) {
+                    if (split.length > 0) {
                         let hasPermission = false;
                         let permissions = await this.redisHelper.getValue(`admin_permissions_${user.id}`);
                         if (!permissions) {
