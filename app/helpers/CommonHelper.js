@@ -120,6 +120,9 @@ class Helper {
             if (body && body.hasOwnProperty('login_password')) {
                 delete body.login_password;
             }
+            if (body && body.hasOwnProperty('new_password')) {
+                delete body.new_password;
+            }
 
             await AdminLog.create({
                 relation: admin.relation,
