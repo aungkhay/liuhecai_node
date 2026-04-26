@@ -18,6 +18,7 @@ class Controller {
         this.commonHelper = new CommonHelper();
         this.redisHelper = new RedisHelper(app);
         this.ResCode = this.commonHelper.ResCode;
+        this.adminLogger = this.commonHelper.adminLogger;
     }
 
     GET_RECAPTCHA = async (req, res) => {
@@ -75,6 +76,9 @@ class Controller {
             const token = encrypt(tokenPrefix + toEncrypt + tokenSuffix, TOKEN_KEY, TOKEN_IV);
             await this.redisHelper.setValue(`admin_token_${user.id}`, token, 24 * 60 * 60);
             await this.redisHelper.deleteKey(uuid);
+
+            // Log
+            await this.adminLogger(req, 'User', 'login');
 
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '登录成功', { token: token });
         } catch (error) {
