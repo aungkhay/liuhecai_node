@@ -38,7 +38,7 @@ class Controller {
                 },
                 offset: offset,
                 limit: perPage,
-                order: [['createdAt', 'DESC']]
+                order: [['id', 'DESC']]
             });
 
             const data = {
