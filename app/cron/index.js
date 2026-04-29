@@ -28,7 +28,7 @@ class Cron {
         ]
         this.zodiacHelper = new ZodiacHelper();
         this.betRuleHelper = new BetRuleHelper();
-        this.max_attempts = 50;
+        this.max_attempts = 100;
         this.current_attempts = 0;
     }
 
@@ -228,7 +228,8 @@ class Cron {
 
             const profitLossPercentage = totalBetAmount > 0 ? ((totalBetAmount - totalWinAmount) / totalBetAmount) * 100 : 0;
             console.log(`[Cron] Profit/Loss percentage: ${profitLossPercentage.toFixed(2)}%`);
-            if (profitLossPercentage < 20) {
+
+            if (profitLossPercentage < 20 || profitLossPercentage > 60) {
                 // max attempts 50 times to get a result with profit/loss percentage >= 20%
                 if (this.current_attempts < this.max_attempts) {
                     this.current_attempts++;
