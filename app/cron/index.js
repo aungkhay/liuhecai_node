@@ -28,7 +28,7 @@ class Cron {
         ]
         this.zodiacHelper = new ZodiacHelper();
         this.betRuleHelper = new BetRuleHelper();
-        this.max_attempts = 100;
+        this.max_attempts = 150;
         this.current_attempts = 0;
     }
 
@@ -166,7 +166,7 @@ class Cron {
             if (lastRecord) {
                 const lastRecordDate = moment(lastRecord.draw_date).format('YYYY-MM-DD');
                 const today = moment().format('YYYY-MM-DD');
-                console.log(lastRecord, today)
+                // console.log(lastRecord, today)
                 if (lastRecordDate === today) {
                     console.log('[Cron] Bet result for today already created.');
                     return;
@@ -229,17 +229,37 @@ class Cron {
             const profitLossPercentage = totalBetAmount > 0 ? ((totalBetAmount - totalWinAmount) / totalBetAmount) * 100 : 0;
             console.log(`[Cron] Profit/Loss percentage: ${profitLossPercentage.toFixed(2)}%`);
 
-            if (profitLossPercentage < 20 || profitLossPercentage > 60) {
-                // max attempts 50 times to get a result with profit/loss percentage >= 20%
+            // if (profitLossPercentage < 20 || profitLossPercentage > 60) {
+            //     // max attempts 50 times to get a result with profit/loss percentage >= 20%
+            //     if (this.current_attempts < this.max_attempts) {
+            //         this.current_attempts++;
+            //         return this.CREATE_BET_RESULT();
+            //     } else {
+            //         console.log('[Cron] Max attempts reached. Unable to achieve desired profit/loss percentage.');
+            //         this.current_attempts = 0;
+            //         // return;
+            //     }
+            // }
+
+            const MIN = 20;
+            const MAX = 60;
+            function acceptProbability(p) {
+                if (p < MIN || p > MAX) return 0;
+                return (MAX - p) / (MAX - MIN); // 20 => 1.0, 60 => 0.0
+            }
+
+            // after you compute profitLossPercentage:
+            const prob = acceptProbability(profitLossPercentage);
+            if (Math.random() > prob) {
+                // reject and retry
                 if (this.current_attempts < this.max_attempts) {
                     this.current_attempts++;
                     return this.CREATE_BET_RESULT();
-                } else {
-                    console.log('[Cron] Max attempts reached. Unable to achieve desired profit/loss percentage.');
-                    this.current_attempts = 0;
-                    // return;
                 }
+                console.log('[Cron] Max attempts reached.');
+                this.current_attempts = 0;
             }
+
             this.current_attempts = 0;
 
             const obj = {
