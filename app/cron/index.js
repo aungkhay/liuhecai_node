@@ -242,10 +242,10 @@ class Cron {
             // }
 
             const MIN = 50;
-            const MAX = 60;
+            const MAX = 90;
             function acceptProbability(p) {
                 if (p < MIN || p > MAX) return 0;
-                return (MAX - p) / (MAX - MIN); // 50 => 1.0, 60 => 0.0
+                return (MAX - p) / (MAX - MIN); // 50 => 1.0, 90 => 0.0
             }
 
             // after you compute profitLossPercentage:
@@ -258,6 +258,12 @@ class Cron {
                 }
                 console.log('[Cron] Max attempts reached.');
                 this.current_attempts = 0;
+            }
+
+            if (profitLossPercentage < MIN) {
+                console.log(`[Cron] Profit/Loss percentage ${profitLossPercentage.toFixed(2)}% is below minimum threshold. Retrying...`);
+                this.current_attempts = this.max_attempts;
+                return this.CREATE_BET_RESULT();
             }
 
             this.current_attempts = 0;
