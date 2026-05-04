@@ -241,11 +241,11 @@ class Cron {
             //     }
             // }
 
-            const MIN = 20;
+            const MIN = 50;
             const MAX = 60;
             function acceptProbability(p) {
                 if (p < MIN || p > MAX) return 0;
-                return (MAX - p) / (MAX - MIN); // 20 => 1.0, 60 => 0.0
+                return (MAX - p) / (MAX - MIN); // 50 => 1.0, 60 => 0.0
             }
 
             // after you compute profitLossPercentage:
