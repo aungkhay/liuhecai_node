@@ -265,13 +265,18 @@ class Controller {
                 limit: perPage,
             });
 
+            const count = await Bet.count({
+                distinct: true,
+                col: 'batch_number',
+            });
+
             const data = {
                 records: bets,
                 meta: {
                     page: page,
                     perPage: perPage,
-                    totalPage: bets.length > 0 ? Math.ceil(bets.length / perPage) : bets.length,
-                    total: bets.length
+                    totalPage: count > 0 ? Math.ceil(count / perPage) : 0,
+                    total: count
                 }
             }
 
