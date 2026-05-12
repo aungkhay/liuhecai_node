@@ -241,8 +241,8 @@ class Cron {
             //     }
             // }
 
-            const MIN = 50;
-            const MAX = 90;
+            const MIN = 5;
+            const MAX = 20;
             function acceptProbability(p) {
                 if (p < MIN || p > MAX) return 0;
                 return (MAX - p) / (MAX - MIN); // 50 => 1.0, 90 => 0.0
