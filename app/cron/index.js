@@ -241,8 +241,8 @@ class Cron {
             //     }
             // }
 
-            const MIN = 5;
-            const MAX = 20;
+            const MIN = await this.redisHelper.getValue('probability_min_win') || 5;
+            const MAX = await this.redisHelper.getValue('probability_max_win') || 20;
             function acceptProbability(p) {
                 if (p < MIN || p > MAX) return 0;
                 return (MAX - p) / (MAX - MIN); // 50 => 1.0, 90 => 0.0
