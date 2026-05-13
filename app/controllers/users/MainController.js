@@ -182,12 +182,12 @@ class Controller {
                 order: [['draw_date', 'DESC']],
             });
 
-            const date = moment(last_record.createdAt).add(3, 'minutes').toDate();
+            const date = moment(last_record.createdAt).subtract(3, 'minutes').toDate();
 
             const results = await ResultGuess.findAll({
                 where: {
                     createdAt: {
-                        [Op.gte]: date
+                        [Op.lt]: date
                     }
                 },
                 order: [['id', 'DESC']],
@@ -220,12 +220,12 @@ class Controller {
                 order: [['draw_date', 'DESC']],
             });
 
-            const date = moment(last_record.createdAt).add(3, 'minutes').toDate();
+            const date = moment(last_record.createdAt).subtract(3, 'minutes').toDate();
 
             const records = await TouZiPingTe.findAll({
                 where: {
                     createdAt: {
-                        [Op.gte]: date
+                        [Op.lt]: date
                     }
                 },
                 order: [['id', 'DESC']],
@@ -245,12 +245,12 @@ class Controller {
                 order: [['draw_date', 'DESC']],
             });
 
-            const date = moment(last_record.createdAt).add(3, 'minutes').toDate();
+            const date = moment(last_record.createdAt).subtract(3, 'minutes').toDate();
             
             const records = await DoubleColor.findAll({
                 where: {
                     createdAt: {
-                        [Op.gte]: date
+                        [Op.lt]: date
                     }
                 },
                 order: [['id', 'DESC']],
@@ -327,12 +327,12 @@ class Controller {
                 order: [['draw_date', 'DESC']],
             });
 
-            const date = moment(last_record.createdAt).add(3, 'minutes').toDate();
+            const date = moment(last_record.createdAt).subtract(3, 'minutes').toDate();
 
             const feeds = await ZodiacFeed.findAll({
                 where: {
                     createdAt: {
-                        [Op.gte]: date
+                        [Op.lt]: date
                     }
                 },
                 order: [['id', 'DESC']],
@@ -352,12 +352,12 @@ class Controller {
                 order: [['draw_date', 'DESC']],
             });
 
-            const date = moment(last_record.createdAt).add(3, 'minutes').toDate();
+            const date = moment(last_record.createdAt).subtract(3, 'minutes').toDate();
 
             const batches = await MustWin3Batch.findAll({
                 where: {
                     createdAt: {
-                        [Op.gte]: date
+                        [Op.lt]: date
                     }
                 },
                 order: [['id', 'DESC']],
@@ -379,12 +379,12 @@ class Controller {
                 order: [['draw_date', 'DESC']],
             });
 
-            const date = moment(last_record.createdAt).add(3, 'minutes').toDate();
+            const date = moment(last_record.createdAt).subtract(3, 'minutes').toDate();
 
             const record = await TenWinSpecial.findAll({
                 where: {
                     createdAt: {
-                        [Op.gte]: date
+                        [Op.lt]: date
                     }
                 },
                 order: [['id', 'DESC']],
