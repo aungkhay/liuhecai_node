@@ -177,7 +177,28 @@ class Controller {
 
     RESULT_GUESS = async (req, res) => {
         try {
+            const lastPlatformRecord = await PlatformRecord.findOne({
+                attributes: ['createdAt'],
+                order: [['draw_date', 'DESC']],
+            });
+
+            const lastResult = await ResultGuess.findOne({
+                attributes: ['createdAt', 'updatedAt'],
+                order: [['createdAt', 'DESC']],
+            });
+
+            const condition = {}
+            if (lastPlatformRecord && lastResult) {
+                if (moment(lastResult.createdAt).isBefore(moment(lastResult.updatedAt))) {
+                    const platformTime = moment(lastPlatformRecord.createdAt).add(3, 'minutes').toDate();
+                    condition.updatedAt = {
+                        [Op.gt]: platformTime
+                    }
+                }
+            }
+
             const results = await ResultGuess.findAll({
+                where: condition,
                 order: [['id', 'DESC']],
                 limit: 10
             });
@@ -216,7 +237,28 @@ class Controller {
 
     GET_DOUBLE_COLOR = async (req, res) => {
         try {
+            const lastPlatformRecord = await PlatformRecord.findOne({
+                attributes: ['createdAt'],
+                order: [['draw_date', 'DESC']],
+            });
+
+            const lastResult = await ResultGuess.findOne({
+                attributes: ['createdAt', 'updatedAt'],
+                order: [['createdAt', 'DESC']],
+            });
+
+            const condition = {}
+            if (lastPlatformRecord && lastResult) {
+                if (moment(lastResult.createdAt).isBefore(moment(lastResult.updatedAt))) {
+                    const platformTime = moment(lastPlatformRecord.createdAt).add(3, 'minutes').toDate();
+                    condition.updatedAt = {
+                        [Op.gt]: platformTime
+                    }
+                }
+            }
+
             const records = await DoubleColor.findAll({
+                where: condition,
                 order: [['id', 'DESC']],
                 limit: 10
             });
@@ -314,7 +356,28 @@ class Controller {
 
     TEN_WIN_SPECIAL = async (req, res) => {
         try {
+            const lastPlatformRecord = await PlatformRecord.findOne({
+                attributes: ['createdAt'],
+                order: [['draw_date', 'DESC']],
+            });
+
+            const lastResult = await ResultGuess.findOne({
+                attributes: ['createdAt', 'updatedAt'],
+                order: [['createdAt', 'DESC']],
+            });
+
+            const condition = {}
+            if (lastPlatformRecord && lastResult) {
+                if (moment(lastResult.createdAt).isBefore(moment(lastResult.updatedAt))) {
+                    const platformTime = moment(lastPlatformRecord.createdAt).add(3, 'minutes').toDate();
+                    condition.updatedAt = {
+                        [Op.gt]: platformTime
+                    }
+                }
+            }
+
             const record = await TenWinSpecial.findAll({
+                where: condition,
                 order: [['id', 'DESC']],
                 limit: 10
             });
