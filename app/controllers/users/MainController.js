@@ -177,31 +177,26 @@ class Controller {
 
     RESULT_GUESS = async (req, res) => {
         try {
+            const results = await ResultGuess.findAll({
+                order: [['id', 'DESC']],
+                limit: 10
+            });
+
             const lastPlatformRecord = await PlatformRecord.findOne({
                 attributes: ['createdAt'],
                 order: [['draw_date', 'DESC']],
             });
 
-            const lastResult = await ResultGuess.findOne({
-                attributes: ['createdAt', 'updatedAt'],
-                order: [['createdAt', 'DESC']],
-            });
-
-            const condition = {}
-            if (lastPlatformRecord && lastResult) {
-                if (moment(lastResult.createdAt).isBefore(moment(lastResult.updatedAt))) {
-                    const platformTime = moment(lastPlatformRecord.createdAt).add(3, 'minutes').toDate();
-                    condition.updatedAt = {
-                        [Op.gt]: platformTime
-                    }
+            if (lastPlatformRecord) {
+                const platformTime = moment(lastPlatformRecord.createdAt).add(3, 'minutes').toDate();
+                if (moment().isBefore(platformTime)) {
+                    results[0].zodiac_attr = '';
+                    results[0].result_number = 0;
+                    results[0].zodiac_name = '';
+                    results[0].result_match = 0;
                 }
             }
 
-            const results = await ResultGuess.findAll({
-                where: condition,
-                order: [['id', 'DESC']],
-                limit: 10
-            });
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', results);
         } catch (error) {
             console.error(error);
@@ -237,31 +232,27 @@ class Controller {
 
     GET_DOUBLE_COLOR = async (req, res) => {
         try {
+            const records = await DoubleColor.findAll({
+                order: [['id', 'DESC']],
+                limit: 10
+            });
+
             const lastPlatformRecord = await PlatformRecord.findOne({
                 attributes: ['createdAt'],
                 order: [['draw_date', 'DESC']],
             });
 
-            const lastResult = await ResultGuess.findOne({
-                attributes: ['createdAt', 'updatedAt'],
-                order: [['createdAt', 'DESC']],
-            });
-
-            const condition = {}
-            if (lastPlatformRecord && lastResult) {
-                if (moment(lastResult.createdAt).isBefore(moment(lastResult.updatedAt))) {
-                    const platformTime = moment(lastPlatformRecord.createdAt).add(3, 'minutes').toDate();
-                    condition.updatedAt = {
-                        [Op.gt]: platformTime
-                    }
+            if (lastPlatformRecord) {
+                const platformTime = moment(lastPlatformRecord.createdAt).add(3, 'minutes').toDate();
+                if (moment().isBefore(platformTime)) {
+                    records[0].color_one = '';
+                    records[0].color_two = '';
+                    records[0].result_number = 0;
+                    records[0].zodiac_name = '';
+                    records[0].match_color = '';
                 }
             }
 
-            const records = await DoubleColor.findAll({
-                where: condition,
-                order: [['id', 'DESC']],
-                limit: 10
-            });
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', records);
         } catch (error) {
             console.error(error);
@@ -356,31 +347,24 @@ class Controller {
 
     TEN_WIN_SPECIAL = async (req, res) => {
         try {
+            const record = await TenWinSpecial.findAll({
+                order: [['id', 'DESC']],
+                limit: 10
+            });
+
             const lastPlatformRecord = await PlatformRecord.findOne({
                 attributes: ['createdAt'],
                 order: [['draw_date', 'DESC']],
             });
 
-            const lastResult = await ResultGuess.findOne({
-                attributes: ['createdAt', 'updatedAt'],
-                order: [['createdAt', 'DESC']],
-            });
-
-            const condition = {}
-            if (lastPlatformRecord && lastResult) {
-                if (moment(lastResult.createdAt).isBefore(moment(lastResult.updatedAt))) {
-                    const platformTime = moment(lastPlatformRecord.createdAt).add(3, 'minutes').toDate();
-                    condition.updatedAt = {
-                        [Op.gt]: platformTime
-                    }
+            if (lastPlatformRecord) {
+                const platformTime = moment(lastPlatformRecord.createdAt).add(3, 'minutes').toDate();
+                if (moment().isBefore(platformTime)) {
+                    record[0].result_number = 0;
+                    record[0].result_zodiac = '';
+                    record[0].is_matched = 0;
                 }
             }
-
-            const record = await TenWinSpecial.findAll({
-                where: condition,
-                order: [['id', 'DESC']],
-                limit: 10
-            });
             return MyResponse(res, this.ResCode.SUCCESS.code, true, '成功', record);
         } catch (error) {
             console.error(error);
