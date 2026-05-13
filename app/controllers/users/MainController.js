@@ -177,19 +177,7 @@ class Controller {
 
     RESULT_GUESS = async (req, res) => {
         try {
-            const last_record = await PlatformRecord.findOne({
-                attributes: ['createdAt'],
-                order: [['draw_date', 'DESC']],
-            });
-
-            const date = moment(last_record.createdAt).subtract(3, 'minutes').toDate();
-
             const results = await ResultGuess.findAll({
-                where: {
-                    createdAt: {
-                        [Op.lt]: date
-                    }
-                },
                 order: [['id', 'DESC']],
                 limit: 10
             });
@@ -215,19 +203,7 @@ class Controller {
 
     GET_TOU_ZI_PING_TE = async (req, res) => {
         try {
-            const last_record = await PlatformRecord.findOne({
-                attributes: ['createdAt'],
-                order: [['draw_date', 'DESC']],
-            });
-
-            const date = moment(last_record.createdAt).subtract(3, 'minutes').toDate();
-
             const records = await TouZiPingTe.findAll({
-                where: {
-                    createdAt: {
-                        [Op.lt]: date
-                    }
-                },
                 order: [['id', 'DESC']],
                 limit: 20
             });
@@ -240,19 +216,7 @@ class Controller {
 
     GET_DOUBLE_COLOR = async (req, res) => {
         try {
-            const last_record = await PlatformRecord.findOne({
-                attributes: ['createdAt'],
-                order: [['draw_date', 'DESC']],
-            });
-
-            const date = moment(last_record.createdAt).subtract(3, 'minutes').toDate();
-            
             const records = await DoubleColor.findAll({
-                where: {
-                    createdAt: {
-                        [Op.lt]: date
-                    }
-                },
                 order: [['id', 'DESC']],
                 limit: 10
             });
@@ -322,19 +286,7 @@ class Controller {
 
     ZODIAC_FEED = async (req, res) => {
         try {
-            const last_record = await PlatformRecord.findOne({
-                attributes: ['createdAt'],
-                order: [['draw_date', 'DESC']],
-            });
-
-            const date = moment(last_record.createdAt).subtract(3, 'minutes').toDate();
-
             const feeds = await ZodiacFeed.findAll({
-                where: {
-                    createdAt: {
-                        [Op.lt]: date
-                    }
-                },
                 order: [['id', 'DESC']],
                 limit: 20
             });
@@ -347,19 +299,7 @@ class Controller {
 
     MUST_WIN_3_BATCH = async (req, res) => {
         try {
-            const last_record = await PlatformRecord.findOne({
-                attributes: ['createdAt'],
-                order: [['draw_date', 'DESC']],
-            });
-
-            const date = moment(last_record.createdAt).subtract(3, 'minutes').toDate();
-
             const batches = await MustWin3Batch.findAll({
-                where: {
-                    createdAt: {
-                        [Op.lt]: date
-                    }
-                },
                 order: [['id', 'DESC']],
                 limit: 5
             });
@@ -374,19 +314,7 @@ class Controller {
 
     TEN_WIN_SPECIAL = async (req, res) => {
         try {
-            const last_record = await PlatformRecord.findOne({
-                attributes: ['createdAt'],
-                order: [['draw_date', 'DESC']],
-            });
-
-            const date = moment(last_record.createdAt).subtract(3, 'minutes').toDate();
-
             const record = await TenWinSpecial.findAll({
-                where: {
-                    createdAt: {
-                        [Op.lt]: date
-                    }
-                },
                 order: [['id', 'DESC']],
                 limit: 10
             });
