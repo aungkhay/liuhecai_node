@@ -49,7 +49,7 @@ class Controller {
             // 8点30分停止下注
             const today = new Date();
             const stopBettingTime = new Date();
-            stopBettingTime.setHours(20, 30, 0, 0);
+            stopBettingTime.setHours(20, 31, 0, 0);
             if (today >= stopBettingTime) {
                 return MyResponse(res, this.ResCode.BAD_REQUEST.code, false, '已过下注时间，无法下注', {});
             }
